@@ -1,0 +1,67 @@
+﻿@model DBWineStore.Models.LoginViewModel
+
+@{
+    Layout = null;
+    ViewBag.Title = "Login — Vignoble";
+}
+<link rel="stylesheet" href="~/CSS/Login.css" />
+
+<div class="login-wrapper">
+    <!-- Left: Image -->
+    <div class="login-image">
+        <img src="https://placehold.co/320x420/4A0E18/F8F4EC?text=Vignoble%0AWine+Store&font=playfair-display" alt="Vignoble Wine">
+        <div class="image-caption">Exceptional wines from the heart of the vineyard</div>
+    </div>
+
+    <!-- Right: Form -->
+    <div class="login-form-side">
+        <div class="logo">Vignoble<span>.</span></div>
+        <h1>Welcome back</h1>
+        <p class="subtitle">Sign in to your account to continue</p>
+
+        <div class="demo-hint">
+            <strong>Demo accounts (from database):</strong><br>
+            <b>Admin</b> / Admin@123<br>
+            <b>Customer01</b> / Customer@123<br>
+            <b>Customer02</b> / Customer2@123
+        </div>
+
+        @using (Html.BeginForm("Login", "Account", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+
+            @Html.ValidationSummary(true, "", new { @class = "error-summary" })
+
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.Username)
+                @Html.TextBoxFor(m => m.Username, new { placeholder = "Enter your username", autofocus = "autofocus" })
+                @Html.ValidationMessageFor(m => m.Username, "", new { @class = "validation-error" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.Password)
+                @Html.PasswordFor(m => m.Password, new { placeholder = "Enter your password" })
+                @Html.ValidationMessageFor(m => m.Password, "", new { @class = "validation-error" })
+            </div>
+
+            <div class="remember-row">
+                <label>
+                    @Html.CheckBoxFor(m => m.RememberMe)
+                    @Html.DisplayNameFor(m => m.RememberMe)
+                </label>
+                <a href="#">Forgot password?</a>
+            </div>
+
+            <button type="submit" class="btn-login">Sign In</button>
+        }
+
+        <p class="register-link">
+            Don't have an account? <a href="@Url.Action("Register","Account")">Create one</a>
+        </p>
+
+        <a href="@Url.Action("Index", "Store")" class="back-home">← Back to Home</a>
+    </div>
+</div>
+
+

@@ -1,0 +1,98 @@
+﻿@model IEnumerable<DBWineStore.Models.Product>
+
+@{
+    ViewBag.Title = "Our Wines";
+    Layout = "~/Views/Shared/_StoreLayout.cshtml";
+}
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet">
+
+<link href="~/CSS/Index2.css" rel="stylesheet" />
+
+<div class="store-shell" id="featured-products">
+    <!-- Main content -->
+    <div class="wine-header text-center">
+        <div class="container">
+            <h1>Our Wine Collection</h1>
+            <p class="mb-0">Discover exceptional wines carefully selected for you</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="create">
+            <h4 class="mb-0" style="color: var(--wine-dark); font-family: 'Playfair Display', serif;">
+                All Products
+            </h4>
+            @Html.ActionLink("＋ Create New Wine", "Create", null, new { @class = "btn btn-wine" })
+        </div>
+
+        @if (!Model.Any())
+        {
+            <div class="empty-state">
+                <h3>No wines found</h3>
+                <p>Start by adding your first product.</p>
+            </div>
+        }
+        else
+        {
+            <div class="item">
+                @foreach (var item in Model)
+                {
+                    <div class="col">
+                        <div class="card product-card">
+                            <div class="product-img-wrapper">
+                                @if (!string.IsNullOrEmpty(item.ImageUrl))
+                                {
+                                    <img src="~/Content/images/@item.ImageUrl" alt="@item.ProductName" />
+                                }
+                                else
+                                {
+                                    <div style="color:#bbb; font-size:3rem;">🍷</div>
+                                }
+                            </div>
+
+                            <div class="product-body">
+                                <div class="product-category">
+                                    @(item.Category?.CategoryName ?? "Uncategorized")
+                                </div>
+
+                                <h5 class="product-name">@item.ProductName</h5>
+
+                                <div class="product-meta">
+                                    @if (!string.IsNullOrEmpty(item.Description))
+                                    {
+                                        @(item.Description.Length > 80
+                                        ? item.Description.Substring(0, 80) + "..."
+                                        : item.Description)
+                                    }
+                                </div>
+
+                                <div class="item2">
+                                    <div class="product-price">
+                                        @item.Price.ToString("#,##0") đ
+                                    </div>
+
+                                    @{
+                                        var stockClass = item.StockQuantity > 20 ? "badge-in-stock" :
+                                                         item.StockQuantity > 0 ? "badge-low-stock" : "badge-out";
+                                        var stockText = item.StockQuantity > 20 ? "In Stock" :
+                                                        item.StockQuantity > 0 ? "Low Stock" : "Out of Stock";
+                                    }
+                                    <span class="stock-badge @stockClass">
+                                        @stockText (@item.StockQuantity)
+                                    </span>
+                                </div>
+
+                                <div class="item3">
+                                    @Html.ActionLink("Edit", "Edit", new { id = item.ProductID })
+                                    @Html.ActionLink("Details", "Details", new { id = item.ProductID })
+                                    @Html.ActionLink("Delete", "Delete", new { id = item.ProductID })
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,241 @@
+﻿/* ===== Wine Theme Variables ===== */
+:root {
+    --wine-dark: #3b0a0a;
+    --wine-red: #6b1e1e;
+    --wine-gold: #c9a227;
+    --cream: #f8f1e9;
+    --soft-bg: #fdf8f3;
+    --text-muted: #64748b;
+}
+
+/* ===== Base ===== */
+body {
+    background-color: #faf7f2;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* ===== Header ===== */
+.wine-header {
+    background: linear-gradient(135deg, var(--wine-dark), var(--wine-red));
+    color: white;
+    padding: 2.8rem 0;
+    margin-bottom: 2.5rem;
+    border-radius: 0 0 24px 24px;
+    box-shadow: 0 10px 30px rgba(59, 10, 10, 0.25);
+}
+
+    .wine-header h1 {
+        font-family: 'Playfair Display', Georgia, serif;
+        font-weight: 700;
+        font-size: 2.4rem;
+        letter-spacing: 1px;
+        margin: 0;
+    }
+
+    .wine-header p {
+        opacity: 0.9;
+        margin-top: 0.6rem;
+        font-size: 1.1rem;
+    }
+
+/* ===== Create button section ===== */
+.create {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+    .create h4 {
+        font-family: 'Playfair Display', Georgia, serif;
+        color: var(--wine-dark);
+        font-size: 1.5rem;
+    }
+
+/* ===== Buttons ===== */
+.btn-wine {
+    background-color: var(--wine-gold) !important;
+    color: var(--wine-dark) !important;
+    border: none !important;
+    font-weight: 600;
+    padding: 0.65rem 1.5rem;
+    border-radius: 50px;
+    transition: all 0.25s ease;
+    text-decoration: none !important;
+}
+
+    .btn-wine:hover {
+        background-color: #e0b83a !important;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 18px rgba(201, 162, 39, 0.4);
+        color: var(--wine-dark) !important;
+    }
+
+/* ===== Product Grid ===== */
+.item {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.8rem;
+}
+
+/* ===== Product Card ===== */
+.product-card {
+    background: white;
+    border: none;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+    .product-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 18px 40px rgba(59, 10, 10, 0.15);
+    }
+
+/* Image */
+.product-img-wrapper {
+    height: 230px;
+    background: var(--soft-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+    .product-img-wrapper img {
+        max-height: 100%;
+        max-width: 100%;
+        object-fit: contain;
+        transition: transform 0.4s ease;
+    }
+
+.product-card:hover .product-img-wrapper img {
+    transform: scale(1.06);
+}
+
+/* Body */
+.product-body {
+    padding: 1.4rem;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.product-category {
+    color: var(--wine-red);
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-bottom: 0.4rem;
+}
+
+.product-name {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 1.25rem;
+    color: var(--wine-dark);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    line-height: 1.3;
+}
+
+.product-meta {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 1.1rem;
+    flex-grow: 1;
+    line-height: 1.45;
+}
+
+/* Price + Stock */
+.item2 {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.2rem;
+}
+
+.product-price {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--wine-gold);
+}
+
+/* Stock badges */
+.stock-badge {
+    font-size: 0.75rem;
+    padding: 0.3rem 0.7rem;
+    border-radius: 20px;
+    font-weight: 500;
+}
+
+.badge-in-stock {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.badge-low-stock {
+    background: #fff3e0;
+    color: #ef6c00;
+}
+
+.badge-out {
+    background: #ffebee;
+    color: #c62828;
+}
+
+/* Action links */
+.item3 {
+    display: flex;
+    gap: 0.9rem;
+    padding-top: 0.9rem;
+    border-top: 1px solid #f1f1f1;
+    font-size: 0.9rem;
+}
+
+    .item3 a {
+        color: var(--wine-red);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.2s;
+    }
+
+        .item3 a:hover {
+            color: var(--wine-gold);
+            text-decoration: underline;
+        }
+
+/* Empty state */
+.empty-state {
+    text-align: center;
+    padding: 5rem 1rem;
+    color: #888;
+}
+
+    .empty-state h3 {
+        font-family: 'Playfair Display', Georgia, serif;
+        color: var(--wine-dark);
+        margin-bottom: 0.5rem;
+    }
+
+/* Responsive */
+@media (max-width: 768px) {
+    .wine-header h1 {
+        font-size: 1.9rem;
+    }
+
+    .create {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .item {
+        grid-template-columns: 1fr;
+    }
+}

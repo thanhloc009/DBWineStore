@@ -1,0 +1,113 @@
+﻿@model DBWineStore.Models.SearchViewModel
+
+@{
+    ViewBag.Title = "Search: " + Model.Query;
+    Layout = null;
+}
+
+<style>
+    .search-page {
+        max-width: 1100px;
+        margin: 40px auto;
+        padding: 0 20px;
+        font-family: 'Inter', sans-serif;
+    }
+    .search-page h1 {
+        font-family: 'Playfair Display', Georgia, serif;
+        color: #4A0E18;
+        font-size: 1.8rem;
+        margin-bottom: 8px;
+    }
+    .search-meta {
+        color: #666;
+        margin-bottom: 28px;
+        font-size: 0.95rem;
+    }
+    .search-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+    }
+    .search-card {
+        background: #fff;
+        border-radius: 12px;
+        border: 1px solid #f0e8dc;
+        text-decoration: none;
+        color: inherit;
+        overflow: hidden;
+        transition: transform 0.2s, box-shadow 0.2s;
+        display: block;
+    }
+    .search-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 24px rgba(0,0,0,0.08);
+    }
+    .search-card img {
+        width: 100%;
+        height: 180px;
+        object-fit: contain;
+        background: #f7f5f2;
+        padding: 12px;
+    }
+    .search-card .info {
+        padding: 14px;
+    }
+    .search-card .name {
+        font-weight: 600;
+        font-size: 0.95rem;
+        margin-bottom: 6px;
+        color: #1a1a1a;
+    }
+    .search-card .price {
+        color: #6B1E2A;
+        font-weight: 700;
+    }
+    .no-result {
+        color: #888;
+        padding: 40px 0;
+        text-align: center;
+    }
+    @*@media (max-width: 900px) {
+        .search-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 500px) {
+        .search-grid { grid-template-columns: 1fr; }
+    }*@
+</style>
+
+<div class="search-page">
+    <h1>Search results</h1>
+    <p class="search-meta">
+        @if (string.IsNullOrWhiteSpace(Model.Query))
+        {
+            <text>Please enter a keyword to search.</text>
+        }
+        else
+        {
+            <text>Found <strong>@Model.TotalCount</strong> result(s) for "<strong>@Model.Query</strong>"</text>
+        }
+    </p>
+
+    @if (Model.Results != null && Model.Results.Any())
+    {
+        <div class="search-grid">
+            @foreach (var p in Model.Results)
+            {
+                <a href="@Url.Action("Details", "Product", new { id = p.ProductID })" class="search-card">
+                    <img src="@(string.IsNullOrEmpty(p.ImageUrl) ? "https://placehold.co/300x300/f5f0eb/6B1E2A?text=Wine" : "/Content/images/" + p.ImageUrl)"
+                         alt="@p.ProductName"
+                         onerror="this.src='https://placehold.co/300x300/f5f0eb/6B1E2A?text=Wine'" />
+                    <div class="info">
+                        <div class="name">@p.ProductName</div>
+                        <div class="price">@String.Format("{0:N0}₫", p.Price)</div>
+                    </div>
+                </a>
+            }
+        </div>
+    }
+    else if (!string.IsNullOrWhiteSpace(Model.Query))
+    {
+        <p class="no-result">No products found.</p>
+    }
+</div>
+

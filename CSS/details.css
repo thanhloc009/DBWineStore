@@ -1,0 +1,455 @@
+﻿:root {
+    --burgundy: #6B1E2A;
+    --deep-burgundy: #4A0E18;
+    --gold: #C9A227;
+    --cream: #F8F4EC;
+    --text-dark: #1a1a1a;
+    --text-muted: #666;
+}
+
+/* =========================================================
+   PRODUCT DETAILS PAGE  (PC / tablet / phone)
+   ========================================================= */
+.pd,
+.pd *,
+.pd *::before,
+.pd *::after {
+    box-sizing: border-box;
+}
+
+.pd {
+    background: #faf7f2;
+    padding: 32px 24px 70px;
+    font-family: "Oswald", sans-serif;
+    color: var(--text-dark);
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+}
+
+.pd-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.pd a,
+.pd button {
+    -webkit-tap-highlight-color: transparent;
+}
+
+    .pd a:focus-visible,
+    .pd button:focus-visible,
+    .pd input:focus-visible {
+        outline: 2px solid var(--gold);
+        outline-offset: 2px;
+    }
+
+/* ---------- Breadcrumb ---------- */
+.pd-crumbs {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 10px;
+    font-size: 0.85rem;
+    margin-bottom: 26px;
+    color: var(--text-muted);
+}
+
+    .pd-crumbs a {
+        color: var(--burgundy);
+        text-decoration: none;
+    }
+
+    .pd-crumbs .sep {
+        opacity: 0.45;
+    }
+
+    .pd-crumbs .current {
+        color: var(--text-dark);
+        font-weight: 500;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 100%;
+    }
+
+/* ---------- Main layout ---------- */
+.pd-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+    gap: 48px;
+    align-items: start;
+    background: #fff;
+    border-radius: 18px;
+    padding: 36px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.05);
+}
+
+/* ---------- Image ---------- */
+.pd-media {
+    position: sticky;
+    top: 24px; /* image stays in view while reading on PC */
+}
+
+.pd-img-wrap {
+    position: relative;
+    aspect-ratio: 4 / 5; /* same shape on every screen size */
+    background: #f5f0eb;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid #f0e8dc;
+}
+
+    .pd-img-wrap img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        display: block;
+    }
+
+.pd-no-img {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 4rem;
+    color: #d9cdbb;
+}
+
+.pd-badge {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: 20px;
+}
+
+    .pd-badge.badge-hot {
+        background: #c53030;
+        color: #fff;
+    }
+
+    .pd-badge.badge-limited {
+        background: #805ad5;
+        color: #fff;
+    }
+
+    .pd-badge.badge-sale {
+        background: var(--gold);
+        color: #1a1210;
+    }
+
+/* ---------- Info ---------- */
+.pd-info {
+    min-width: 0;
+}
+
+.pd-cat {
+    display: inline-block;
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--burgundy);
+    background: #f8f0e8;
+    padding: 6px 14px;
+    border-radius: 20px;
+    text-decoration: none;
+    margin-bottom: 16px;
+}
+
+.pd-title {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: clamp(1.6rem, 4.2vw, 2.5rem);
+    line-height: 1.2;
+    font-weight: 600;
+    color: var(--deep-burgundy);
+    margin: 0 0 14px;
+    overflow-wrap: anywhere;
+}
+
+.pd-price {
+    font-size: clamp(1.6rem, 4vw, 2.1rem);
+    font-weight: 700;
+    color: var(--burgundy);
+    margin-bottom: 14px;
+}
+
+.pd-stock {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    padding: 6px 14px;
+    border-radius: 20px;
+    margin-bottom: 26px;
+}
+
+    .pd-stock .dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: currentColor;
+    }
+
+    .pd-stock.is-in {
+        color: #2f7a4d;
+        background: #e8f4ec;
+    }
+
+    .pd-stock.is-low {
+        color: #b4540a;
+        background: #fdf0e1;
+    }
+
+    .pd-stock.is-out {
+        color: #b02a2a;
+        background: #fbe9e9;
+    }
+
+/* ---------- Description ---------- */
+.pd-section {
+    border-top: 1px solid #efe7da;
+    padding-top: 20px;
+    margin-bottom: 26px;
+}
+
+    .pd-section h2 {
+        font-size: 1rem;
+        font-weight: 600;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        margin: 0 0 10px;
+    }
+
+.pd-desc {
+    font-size: 1.02rem;
+    line-height: 1.75;
+    color: #3a3a3a;
+    margin: 0;
+}
+
+/* ---------- Buy box ---------- */
+.pd-buy {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-bottom: 28px;
+}
+
+.pd-qty {
+    display: inline-flex;
+    align-items: stretch;
+    border: 1.5px solid #e0d8cc;
+    border-radius: 40px;
+    overflow: hidden;
+    background: #fff;
+    height: 52px;
+}
+
+.qty-btn {
+    width: 48px;
+    border: 0;
+    background: transparent;
+    color: var(--deep-burgundy);
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+    .qty-btn:active {
+        background: #f3ebdf;
+    }
+
+.pd-qty input {
+    width: 56px;
+    border: 0;
+    text-align: center;
+    font-size: 1.05rem;
+    font-weight: 600;
+    font-family: inherit;
+    color: var(--text-dark);
+    background: transparent;
+    -moz-appearance: textfield;
+}
+
+    .pd-qty input::-webkit-outer-spin-button,
+    .pd-qty input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+.pd-btn-add {
+    flex: 1 1 220px;
+    height: 52px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: var(--burgundy);
+    color: #fff;
+    border: 0;
+    border-radius: 40px;
+    padding: 0 28px;
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.25s, color 0.25s, transform 0.25s;
+}
+
+    .pd-btn-add:active:not(:disabled) {
+        background: var(--gold);
+        color: #111;
+    }
+
+    .pd-btn-add:disabled {
+        background: #cfc6b8;
+        color: #fff;
+        cursor: not-allowed;
+    }
+
+/* ---------- Quick facts ---------- */
+.pd-meta {
+    margin: 0 0 24px;
+    border: 1px solid #f0e8dc;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+    .pd-meta > div {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 12px 16px;
+        font-size: 0.92rem;
+    }
+
+        .pd-meta > div:nth-child(odd) {
+            background: #faf7f2;
+        }
+
+    .pd-meta dt {
+        color: var(--text-muted);
+        margin: 0;
+    }
+
+    .pd-meta dd {
+        margin: 0;
+        font-weight: 500;
+        text-align: right;
+    }
+
+.pd-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.92rem;
+    font-weight: 500;
+    color: var(--burgundy);
+    text-decoration: none;
+    padding: 10px 0;
+}
+
+/* ---------- Mouse-only hover (so phones don't get stuck hovers) ---------- */
+@media (hover: hover) {
+    .pd-crumbs a:hover,
+    .pd-back:hover {
+        text-decoration: underline;
+        text-underline-offset: 3px;
+    }
+
+    .pd-cat:hover {
+        background: var(--burgundy);
+        color: #fff;
+    }
+
+    .qty-btn:hover {
+        background: #f3ebdf;
+    }
+
+    .pd-btn-add:hover:not(:disabled) {
+        background: var(--gold);
+        color: #111;
+        transform: translateY(-2px);
+    }
+}
+
+/* =========================================================
+   TABLET  (up to 900px) - image on top, info below
+   ========================================================= */
+@media (max-width: 900px) {
+    .pd {
+        padding: 24px 16px 50px;
+    }
+
+    .pd-grid {
+        grid-template-columns: 1fr;
+        gap: 28px;
+        padding: 24px;
+    }
+
+    .pd-media {
+        position: static;
+        max-width: 460px;
+        width: 100%;
+        margin: 0 auto;
+    }
+}
+
+/* =========================================================
+   PHONE  (up to 600px)
+   ========================================================= */
+@media (max-width: 600px) {
+    .pd {
+        padding: 16px 12px 40px;
+    }
+
+    .pd-crumbs {
+        font-size: 0.8rem;
+        margin-bottom: 16px;
+    }
+
+    .pd-grid {
+        padding: 16px;
+        gap: 22px;
+        border-radius: 14px;
+    }
+
+    .pd-img-wrap {
+        border-radius: 10px;
+    }
+
+    .pd-buy {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+
+    .pd-qty {
+        align-self: flex-start;
+    }
+
+    .pd-btn-add {
+        flex: 0 0 auto;
+        width: 100%;
+    }
+
+    .pd-meta > div {
+        padding: 11px 14px;
+        font-size: 0.88rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .pd * {
+        transition: none !important;
+    }
+}

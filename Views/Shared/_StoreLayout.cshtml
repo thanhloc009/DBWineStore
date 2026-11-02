@@ -1,0 +1,168 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewBag.Title - Vignoble</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    @Styles.Render("~/Content/css")
+    <link rel="stylesheet" href="~/Content/sitewine.css" />
+    @Scripts.Render("~/bundles/modernizr")
+
+    
+</head>
+<body>
+    
+
+    <!-- Promo -->
+    <div class="promo-bar">
+        Get FREE Shipping On 6+ Bottles Today
+    </div>
+
+    <!-- Main Header -->
+    <header class="main-header">
+        <a href="@Url.Action("Index", "Home")" class="logo-text">
+            Vignoble<span>.</span>
+        </a>
+
+        <!-- Search: input div + button div -->
+        <div class="search-container">
+            @using (Html.BeginForm("Search","Product", FormMethod.Get,
+    new { @class = "search-form" }))
+            {
+                <div class="search-input">
+                    <input type="text"
+                           name="q"
+                           value="@Request.QueryString["q"]"
+                           placeholder="Search wine inventory..."
+                           aria-label="Search" />
+                </div>
+
+                <div class="search-button">
+                    <button type="submit" aria-label="Search Button">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
+                </div>
+            }
+        </div>
+
+        <div class="header-actions">
+
+            <!-- Account -->
+            @if (Session["UserID"] == null)
+            {
+                <a href="@Url.Action("Login", "Account")" class="btn-login-header">
+                    <i class="fa-regular fa-user"></i> Login
+                </a>
+            }
+            else
+            {
+                <div class="account-section">
+                    <button type="button" class="user-chip" id="accountBtn">
+                        <img class="avatar"
+                             src="https://placehold.co/68x68/6B1E2A/F8F4EC?text=@(Session["UserName"] != null && Session["UserName"].ToString().Length > 0 ? Session["UserName"].ToString().Substring(0, 1).ToUpper() : "U")"
+                             alt="Avatar" />
+                        <div class="user-meta">
+                            <span class="display-name">@(Session["FullName"] ?? Session["UserName"])</span>
+                            <span class="username">@@@Session["UserName"]</span>
+                        </div>
+                        <i class="fa-solid fa-chevron-down chevron"></i>
+                    </button>
+
+                    <div class="dropdown-menu" id="accountMenu">
+                        <a href="@Url.Action("Details", "Account")" class="dropdown-item">
+                            <i class="fa-solid fa-user"></i> My Account
+                        </a>
+                        @if (Session["RoleName"] != null && Session["RoleName"].ToString() == "Admin")
+                        {
+                            <a href="@Url.Action("Index", "AccountManage")" class="dropdown-item">
+                                <i class="fa-solid fa-box"></i> Manage Accounts
+                            </a>
+                        }
+                        <a href="@Url.Action("Logout", "Account")" class="dropdown-item logout">
+                            <i class="fa-solid fa-right-from-bracket"></i> Logout
+                        </a>
+                    </div>
+                </div>
+            }
+            @{
+                var cartItems = Session["Cart"] as
+                    System.Collections.Generic.List<DBWineStore.Models.CartItemViewModel>;
+
+                int cartCount = 0;
+
+                if (cartItems != null)
+                {
+                    foreach (var item in cartItems)
+                    {
+                        cartCount += item.Quantity;
+                    }
+                }
+            }
+            <!-- Cart -->
+            <a href="@Url.Action("Checkout","Cart")" class="cart-section">
+                <div class="cart-icon-wrapper">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span class="cart-badge">
+                        @cartCount
+                    </span>
+                </div>
+                <span>Cart</span>
+            </a>
+        </div>
+    </header>
+
+    <!-- Nav -->
+    <header class="store-header">
+        <div class="container">
+            <a class="brand" href="@Url.Action("Home", "MainPage")">WINE<span>STORE</span></a>
+            <nav class="store-nav">
+                @Html.ActionLink("Trang chủ", "Home", "MainPage")
+                @Html.ActionLink("Quản lý Sản phẩm", "Index", "Products")
+                @Html.ActionLink("Mua Hang", "Index", "Store")
+                @Html.ActionLink("Đăng nhập", "Login", "Account")
+                @Html.ActionLink("Đăng ký", "Register", "Account")
+                @if (Session["RoleName"] != null && Session["RoleName"].ToString() == "Admin")
+                {
+                    @Html.ActionLink("Quản lý TK", "Index", "AccountManage")
+                }
+            </nav>
+        </div>
+    </header>
+
+    <div class="main-content">
+        @RenderBody()
+    </div>
+
+    <footer class="site-footer">
+        <div class="logo">Vignoble.</div>
+        <p>Premium wines curated with passion. © 2026 Vignoble.</p>
+    </footer>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var btn = document.getElementById('accountBtn');
+            var menu = document.getElementById('accountMenu');
+            if (!btn || !menu) return;
+
+            btn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                menu.classList.toggle('show');
+            });
+
+            document.addEventListener('click', function (e) {
+                if (!menu.contains(e.target) && !btn.contains(e.target)) {
+                    menu.classList.remove('show');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

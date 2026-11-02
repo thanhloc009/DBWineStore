@@ -1,0 +1,82 @@
+﻿@model DBWineStore.Models.RegisterViewModel
+@{
+    Layout = null;
+    ViewBag.Title = "Register — Vignoble";
+}
+<link rel="stylesheet" href="~/CSS/Register.css" />
+
+<div class="register-wrapper">
+    <!-- Left: Image -->
+    <div class="register-image">
+        <img src="https://placehold.co/320x420/4A0E18/F8F4EC?text=Join+Vignoble&font=playfair-display" alt="Join Vignoble">
+        <div class="image-caption">Create your account and explore fine wines</div>
+    </div>
+
+    <!-- Right: Form -->
+    <div class="register-form-side">
+        <div class="logo">Vignoble<span>.</span></div>
+        <h1>Create Account</h1>
+        <p class="subtitle">Join us and discover exceptional wines</p>
+
+        @using (Html.BeginForm("Register", "Account", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+
+            @Html.ValidationSummary(true, "", new { @class = "error-summary" })
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.Username)
+                @Html.TextBoxFor(m => m.Username, new { placeholder = "Choose a username" })
+                @Html.ValidationMessageFor(m => m.Username, "", new { @class = "validation-error" })
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Password)
+                    @Html.PasswordFor(m => m.Password, new { placeholder = "Password" })
+                    @Html.ValidationMessageFor(m => m.Password, "", new { @class = "validation-error" })
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.ConfirmPassword)
+                    @Html.PasswordFor(m => m.ConfirmPassword, new { placeholder = "Confirm password" })
+                    @Html.ValidationMessageFor(m => m.ConfirmPassword, "", new { @class = "validation-error" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.FullName)
+                @Html.TextBoxFor(m => m.FullName, new { placeholder = "Your full name" })
+                @Html.ValidationMessageFor(m => m.FullName, "", new { @class = "validation-error" })
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Email)
+                    @Html.TextBoxFor(m => m.Email, new { placeholder = "Email (optional)" })
+                    @Html.ValidationMessageFor(m => m.Email, "", new { @class = "validation-error" })
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Phone)
+                    @Html.TextBoxFor(m => m.Phone, new { placeholder = "Phone (optional)" })
+                    @Html.ValidationMessageFor(m => m.Phone, "", new { @class = "validation-error" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.Address)
+                @Html.TextBoxFor(m => m.Address, new { placeholder = "Address (optional)" })
+                @Html.ValidationMessageFor(m => m.Address, "", new { @class = "validation-error" })
+            </div>
+
+            <button type="submit" class="btn-register">Create Account</button>
+        }
+
+        <p class="login-link">
+            Already have an account? <a href="@Url.Action("Login", "Account")">Sign in</a>
+        </p>
+
+        <a href="@Url.Action("Index", "Store")" class="back-home">← Back to Home</a>
+    </div>
+</div>
+
+

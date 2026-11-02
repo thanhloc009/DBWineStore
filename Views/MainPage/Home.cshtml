@@ -1,0 +1,230 @@
+﻿@{
+    ViewBag.Title = "Vignoble — Premium Wines";
+    Layout = "~/Views/Shared/_StoreLayout.cshtml";
+
+    var allProducts = ViewBag.Products as List<DBWineStore.Models.Product> ?? new List<DBWineStore.Models.Product>();
+    var categories = ViewBag.Categories as List<DBWineStore.Models.Category> ?? new List<DBWineStore.Models.Category>();
+    var rnd = new Random();
+    var identityProducts = allProducts
+    .Where(p => p.Category == null || p.Category.CategoryName != "Phụ kiện rượu vang")
+    .OrderBy(x => rnd.Next())
+    .Take(12)
+    .ToList();
+    var topPicks = allProducts.OrderByDescending(p => p.Price).Take(4).ToList();
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+<link rel="stylesheet" href="~/CSS/Main.css" />
+
+<div class="all">
+    <!-- ========== HERO ========== -->
+    <section class="hero">
+        <div class="hero-bg"></div>
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <div class="hero-badge">Bộ Sưu Tập Cao Cấp 2026</div>
+            <h1>Rượu Vang Tuyệt Hảo<br>Cho Những Khoảnh Khắc Đặc Biệt</h1>
+            <p>Khám phá tuyển chọn rượu vang thượng hạng từ những vườn nho danh tiếng nhất thế giới.</p>
+            <a href="#products" class="btn-hero">Mua Ngay</a>
+        </div>
+    </section>
+
+    <!-- ========== WINE IDENTITY CARDS ========== -->
+    <section class="identity-section">
+        <div class="identity-inner">
+            <div class="identity-header">
+                <h2>Những Nhân Vật Rượu</h2>
+                <p>Gặp gỡ những huyền thoại trong hầm rượu của chúng tôi</p>
+                <button type="button" class="btn-shuffle" onclick="shuffleIdentityCards()">
+                    <i class="fa-solid fa-shuffle"></i> Shuffle Cards
+                </button>
+            </div>
+
+            <div class="identity-grid">
+                @if (identityProducts.Any())
+                {
+                    foreach (var p in identityProducts)
+                    {
+                        <a href="@Url.Action("Details","Products", new { id = p.ProductID })" class="id-card">
+                            <div class="id-card-header">VIGNOBLE</div>
+                            <div class="id-card-body">
+                                <img src="@Url.Content("~/Content/images/" + p.ImageUrl)"
+                                     alt="@p.ProductName" />
+                            </div>
+                            <div class="id-card-footer">
+                                <div class="wine-name">@p.ProductName</div>
+                                @if (p.StockQuantity <= 10)
+                                {
+                                    <span class="stock-badge badge-hot">Hot Sale</span>
+                                }
+                                else if (p.StockQuantity <= 20)
+                                {
+                                    <span class="stock-badge badge-limited">Limited</span>
+                                }
+                                else if (p.StockQuantity >= 20)
+                                {
+                                    <span class="stock-badge badge-sale">Best Seller</span>
+                                }
+                            </div>
+                        </a>
+
+                    }
+                }
+            </div>
+
+
+
+        </div>
+    </section>
+
+
+    <!-- ========== TOP PICKS ========== -->
+    <section class="top-picks">
+        <div class="top-picks-inner">
+            <div class="top-picks-header">
+                <h2>Những lựa chọn hàng đầu của chúng tôi</h2>
+                <p>Khám phá những chai rượu vang được chọn lọc kỹ càng bởi đội ngũ tận tâm của chúng tôi</p>
+            </div>
+
+            <div class="top-picks-grid">
+                @if (topPicks.Any())
+                {
+                    var authors = new[] {
+                    new { Name = "Minh Anh", Role = "Sommelier" },
+                    new { Name = "Gia Hân", Role = "Wine Curator" },
+                    new { Name = "Admin", Role = "Cellar Master" },
+                    new { Name = "Vignoble", Role = "Founder" }
+                };
+                    var idx = 0;
+                    foreach (var p in topPicks)
+                    {
+                        var author = authors[idx % authors.Length];
+                        <a href="@Url.Action("Details", "Products", new { id = p.ProductID })" class="pick-card">
+                            <div class="pick-img-wrap">
+                                <img src="~/Content/images/@p.ImageUrl" alt="@p.ProductName" />
+                            </div>
+                            <h3>@p.ProductName</h3>
+                            <p class="pick-desc">
+                                "@(string.IsNullOrEmpty(p.Description)
+                                ? "A refined selection from our premium collection."
+                                : (p.Description.Length > 120 ? p.Description.Substring(0, 120) + "..." : p.Description))"
+                            </p>
+                            <p class="pick-author">@author.Name / @author.Role</p>
+                            <span class="pick-link">Shop this wine</span>
+                        </a>
+                        idx++;
+                    }
+                }
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== PRODUCTS BY CATEGORY ========== -->
+    <section class="products-section" id="products">
+        <div class="section">
+            @foreach (var cat in categories)
+            {
+                var productsInCat = allProducts.Where(p => p.CategoryID == cat.CategoryID).ToList();
+                var catIndex = categories.IndexOf(cat);
+                var sliderId = "slider-" + catIndex;
+                var pages = (int)Math.Ceiling(Math.Max(productsInCat.Count, 1) / 4.0);
+
+                <div class="category-block">
+                    <div class="category-title">
+                        <span><span class="cat-badge"></span>@cat.CategoryName</span>
+                        <a href="@Url.Action("ByCategory", "Product", new { id = cat.CategoryID })">View all →</a>
+                    </div>
+
+                    @if (productsInCat.Any())
+                    {
+                        <div class="slider-container">
+                            <button class="slider-btn prev" onclick="slide('@sliderId', -1)" @(pages <= 1 ? "disabled" : "") id="@(sliderId)-prev">
+                                <i class="fa-solid fa-chevron-left"></i>
+                            </button>
+
+                            <div class="slider-wrapper" id="@sliderId">
+                                <div class="slider-track" data-page="0" data-total="@pages">
+                                    @for (int page = 0; page < pages; page++)
+                                    {
+                                        var pageProducts = productsInCat.Skip(page * 4).Take(4).ToList();
+                                        <div class="slide">
+                                            @foreach (var p in pageProducts)
+                                            {
+
+                                                <a href="@Url.Action("Details", "Products", new { id = p.ProductID })" class="product-card">
+
+                                                    <div class="product-image-wrap">
+                                                        <img class="product-img"
+                                                             src="~/Content/images/@p.ImageUrl"
+                                                             alt="@p.ProductName" />
+                                                    </div>
+
+                                                    <div class="product-info">
+                                                        <div class="product-name">@p.ProductName</div>
+                                                        <div class="product-price">@String.Format("{0:N0}₫", p.Price)</div>
+                                                    </div>
+
+                                                </a>
+
+                                            }
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+
+                            <button class="slider-btn next" onclick="slide('@sliderId', 1)" @(pages <= 1 ? "disabled" : "") id="@(sliderId)-next">
+                                <i class="fa-solid fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="no-product">No products in this category yet.</p>
+                    }
+                </div>
+            }
+        </div>
+
+    </section>
+</div>
+
+<script>
+    function slide(sliderId, direction) {
+        var wrapper = document.getElementById(sliderId);
+        if (!wrapper) return;
+
+        var track = wrapper.querySelector('.slider-track');
+        var currentPage = parseInt(track.getAttribute('data-page')) || 0;
+        var totalPages = parseInt(track.getAttribute('data-total')) || 1;
+
+        var newPage = currentPage + direction;
+        if (newPage < 0 || newPage >= totalPages) return;
+
+        track.style.transform = 'translateX(-' + (newPage * 100) + '%)';
+        track.setAttribute('data-page', newPage);
+
+        var prevBtn = document.getElementById(sliderId + '-prev');
+        var nextBtn = document.getElementById(sliderId + '-next');
+
+        if (prevBtn) prevBtn.disabled = (newPage === 0);
+        if (nextBtn) nextBtn.disabled = (newPage >= totalPages - 1);
+
+    }
+    function shuffleIdentityCards() {
+        var grid = document.querySelector('.identity-grid');
+        if (!grid) return;
+        grid.classList.add('shuffling');
+        setTimeout(function () {
+            var cards = Array.from(grid.children);
+            for (var i = cards.length - 1; i > 0; i--) {
+                var j = Math.floor(Math.random() * (i + 1));
+                var temp = cards[i];
+                cards[i] = cards[j];
+                cards[j] = temp;
+            }
+            cards.forEach(function (card) { grid.appendChild(card); });
+            grid.classList.remove('shuffling');
+        }, 200);
+    }
+</script>

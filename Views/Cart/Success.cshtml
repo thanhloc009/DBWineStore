@@ -1,0 +1,16 @@
+﻿@{
+    ViewBag.Title = "Đặt hàng thành công";
+    Layout = "~/Views/Shared/_StoreLayout.cshtml";
+}
+
+<div class="container text-center" style="padding: 60px 15px;">
+    <h1 style="color: green;">✓ Đặt hàng thành công!</h1>
+
+    <p>Cảm ơn bạn đã mua hàng tại WEWINE.</p>
+
+    <p>Đơn hàng của bạn đã được ghi nhận.</p>
+
+    <a href="@Url.Action("Index", "Store")" class="btn btn-primary">
+        Tiếp tục mua sắm
+    </a>
+</div>

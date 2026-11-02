@@ -1,0 +1,216 @@
+﻿:root {
+    --burgundy: #6B1E2A;
+    --deep-burgundy: #4A0E18;
+    --gold: #C9A227;
+    --cream: #F8F4EC;
+    --warm-white: #FFFDF8;
+    --text-dark: #2C1810;
+    --text-muted: #6B5B4F;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: var(--warm-white);
+    color: var(--text-dark);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 0;
+}
+
+.register-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 1.15fr;
+    max-width: 1000px;
+    width: 100%;
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.12);
+    margin: 24px;
+}
+
+/* Left image */
+.register-image {
+    background: linear-gradient(145deg, #4A0E18, #6B1E2A);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    position: relative;
+    min-height: 640px;
+}
+
+    .register-image img {
+        max-width: 100%;
+        max-height: 420px;
+        object-fit: contain;
+        border-radius: 12px;
+        filter: drop-shadow(0 15px 30px rgba(0,0,0,0.35));
+    }
+
+.image-caption {
+    position: absolute;
+    bottom: 28px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    color: rgba(255,255,255,0.7);
+    font-size: 0.85rem;
+    font-family: 'Playfair Display', serif;
+}
+
+/* Right form */
+.register-form-side {
+    padding: 40px 42px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.7rem;
+    font-weight: 600;
+    color: var(--deep-burgundy);
+    margin-bottom: 6px;
+}
+
+    .logo span {
+        color: var(--gold);
+    }
+
+.register-form-side h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.7rem;
+    color: var(--deep-burgundy);
+    margin-bottom: 6px;
+}
+
+.subtitle {
+    color: var(--text-muted);
+    font-size: 0.92rem;
+    margin-bottom: 22px;
+}
+
+.form-group {
+    margin-bottom: 16px;
+}
+
+    .form-group label {
+        display: block;
+        font-size: 0.86rem;
+        font-weight: 500;
+        margin-bottom: 5px;
+        color: var(--text-dark);
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 11px 15px;
+        border: 1.5px solid #E0D5C5;
+        border-radius: 10px;
+        font-size: 0.93rem;
+        font-family: inherit;
+        transition: border-color 0.25s;
+        background: #FFFDF8;
+    }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--burgundy);
+        }
+
+.validation-error {
+    color: #c53030;
+    font-size: 0.8rem;
+    margin-top: 3px;
+    display: block;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+.btn-register {
+    width: 100%;
+    background: var(--burgundy);
+    color: white;
+    border: none;
+    padding: 13px;
+    border-radius: 40px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.3s;
+    margin-top: 8px;
+    margin-bottom: 18px;
+}
+
+    .btn-register:hover {
+        background: var(--deep-burgundy);
+    }
+
+.login-link {
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+    .login-link a {
+        color: var(--burgundy);
+        font-weight: 500;
+        text-decoration: none;
+    }
+
+.back-home {
+    display: inline-block;
+    margin-top: 18px;
+    font-size: 0.86rem;
+    color: var(--text-muted);
+    text-decoration: none;
+}
+
+    .back-home:hover {
+        color: var(--burgundy);
+    }
+
+.error-summary {
+    background: #fde8e8;
+    color: #c53030;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 0.86rem;
+    margin-bottom: 16px;
+}
+@media (max-width: 768px) {
+    .register-wrapper {
+        grid-template-columns: 1fr;
+    }
+
+    .register-image {
+        min-height: 220px;
+        padding: 24px;
+    }
+
+        .register-image img {
+            max-height: 160px;
+        }
+
+    .register-form-side {
+        padding: 28px 22px;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+}

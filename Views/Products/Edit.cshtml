@@ -1,0 +1,144 @@
+﻿
+@model DBWineStore.Models.Product
+
+@{
+    ViewBag.Title = "Edit Product";
+    Layout = "~/Views/Shared/_StoreLayout.cshtml";
+}
+
+<link rel="stylesheet" href="@Url.Content("~/CSS/Edit.css")" />
+
+<div class="edit-page">
+    <div class="edit-container">
+
+        <div class="edit-heading">
+            <span class="edit-eyebrow">VIGNOBLE ADMINISTRATION</span>
+            <h2>Edit Product</h2>
+            <p>Update your product information and image.</p>
+        </div>
+
+        @using (Html.BeginForm("Edit", "Product", FormMethod.Post,
+            new { enctype = "multipart/form-data", @class = "edit-form" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(model => model.ProductID)
+
+            @Html.ValidationSummary(true, "", new { @class = "validation-summary" })
+
+            <div class="edit-grid">
+
+                <div class="form-section">
+                    <h3>Product Information</h3>
+
+                    <div class="form-field">
+                        @Html.LabelFor(model => model.ProductName, "Product Name")
+                        @Html.TextBoxFor(model => model.ProductName,
+                            new { @class = "form-input", placeholder = "Enter product name" })
+                        @Html.ValidationMessageFor(model => model.ProductName, "", new { @class = "field-error" })
+                    </div>
+
+                    <div class="form-field">
+                        @Html.LabelFor(model => model.Description, "Description")
+                        @Html.TextAreaFor(model => model.Description,
+                            new { @class = "form-input description-input", placeholder = "Enter product description" })
+                        @Html.ValidationMessageFor(model => model.Description, "", new { @class = "field-error" })
+                    </div>
+
+                    <div class="form-field">
+                        @Html.LabelFor(model => model.CategoryID, "Category")
+                        @Html.DropDownListFor(model => model.CategoryID,
+                            (SelectList)ViewBag.Categories,
+                            "-- Select Category --",
+                            new { @class = "form-input" })
+                        @Html.ValidationMessageFor(model => model.CategoryID, "", new { @class = "field-error" })
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-field">
+                            @Html.LabelFor(model => model.Price, "Price")
+                            @Html.TextBoxFor(model => model.Price,
+                            "{0:0}",
+                            new { @class = "form-input", type = "number", step = "1", min = "0" })
+                            @Html.ValidationMessageFor(model => model.Price, "", new { @class = "field-error" })
+                        </div>
+
+                        <div class="form-field">
+                            @Html.LabelFor(model => model.StockQuantity, "Stock Quantity")
+                            @Html.TextBoxFor(model => model.StockQuantity,
+                                new { @class = "form-input", type = "number", min = "0" })
+                            @Html.ValidationMessageFor(model => model.StockQuantity, "", new { @class = "field-error" })
+                        </div>
+                    </div>
+
+                    <div class="form-field active-field">
+                        <div>
+                            <strong>Product Status</strong>
+                            <small>Choose whether this product is available in your store.</small>
+                        </div>
+                        <label class="switch">
+                            @Html.CheckBoxFor(model => model.IsActive)
+                            <span class="switch-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-section image-section">
+                    <h3>Product Image</h3>
+                    <p class="section-description">Upload a new image to replace the current one.</p>
+
+                    <div class="image-preview-box">
+                        <img id="imagePreview"
+                             src="@(string.IsNullOrEmpty(Model.ImageUrl)
+                                ? Url.Content("~/Content/images/no-image.png")
+                                : Url.Content("~/Content/images/" + Model.ImageUrl))"
+                             alt="Product preview" />
+                    </div>
+
+                    <label for="imageFile" class="upload-button">
+                        <span>＋</span> Choose Image
+                    </label>
+
+                    <input type="file"
+                           id="imageFile"
+                           name="imageFile"
+                           accept=".jpg,.jpeg,.png,.webp"
+                           hidden />
+
+                    <p id="fileName" class="file-name">No new image selected</p>
+                    <p class="image-hint">Supported: JPG, JPEG, PNG, WEBP. Maximum 5 MB.</p>
+
+                    @Html.HiddenFor(model => model.ImageUrl)
+                </div>
+
+            </div>
+
+            <div class="edit-actions">
+                <a href="@Url.Action("Index", "Product")" class="back-button">Cancel</a>
+                <button type="submit" class="save-button">Save Changes</button>
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    document.getElementById("imageFile").addEventListener("change", function () {
+        const file = this.files[0];
+
+        if (file) {
+            document.getElementById("fileName").textContent = file.name;
+
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                document.getElementById("imagePreview").src = e.target.result;
+            };
+
+            reader.readAsDataURL(file);
+        }
+    });
+</script>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+```

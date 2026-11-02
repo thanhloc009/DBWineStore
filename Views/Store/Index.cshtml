@@ -1,0 +1,196 @@
+﻿
+@model IEnumerable<DBWineStore.Models.ProductCardViewModel>
+
+@{
+    ViewBag.Title = "Trang chủ";
+    Layout = "~/Views/Shared/_StoreLayout.cshtml";
+
+    var categories = Model
+        .GroupBy(x => x.ProductID)
+        .Select(x => x.First())
+        .ToList();
+}
+
+<link rel="stylesheet" href="@Url.Content("~/CSS/Index.css")" />
+
+<section class="hero">
+    <div>
+        <p>NEW COLLECTION / FINE WINES</p>
+
+        <h1>Khám phá thế giới rượu vang</h1>
+
+        <p>
+            Tuyển chọn những chai vang đỏ, trắng, hồng và sủi
+            từ các vùng nổi tiếng thế giới.
+        </p>
+
+        <a class="btn-brand" href="#featured-products">
+            Mua sắm ngay
+        </a>
+    </div>
+</section>
+
+<h2 class="section-title">Tất cả sản phẩm</h2>
+
+<div class="store-shell" id="featured-products">
+
+    <!-- CATEGORY SIDEBAR -->
+    <aside class="category-panel">
+
+        <h3>Danh mục</h3>
+
+        <ul class="category-list">
+
+            @*<li>
+                    <a href="#"
+                       class="category-link active"
+                       data-category="all">
+                        Tất cả sản phẩm
+                    </a>
+                </li>*@
+
+            @*@foreach (var category in categories)
+                {
+                    <li>
+                        <a href="#"
+                           class="category-link"
+                           data-category="@category.ProductID<1">
+                            @category.CategoryName
+                        </a>
+                    </li>
+                }*@
+
+        </ul>
+
+    </aside>
+
+    <!-- PRODUCT LIST -->
+    <section class="product-section">
+
+        <div class="product-grid">
+
+            @foreach (var item in Model)
+            {
+                <article class="product-card"
+                         data-category="@item.ProductID">
+
+                    <div class="product-image">
+                        <img src="@Url.Content("~/Content/images/" + item.ImagePro)"
+                             alt="@item.NamePro" />
+                    </div>
+
+                    <div class="product-body">
+
+                        <div class="product-category">
+                            @item.CategoryName
+                        </div>
+
+                        <div class="product-name">
+                            @item.NamePro
+                        </div>
+
+                        <div class="product-description">
+                            @(item.ShortDescription != null &&
+                              item.ShortDescription.Length > 60
+                                ? item.ShortDescription.Substring(0, 60) + "..."
+                                : item.ShortDescription)
+                        </div>
+
+                        <div class="product-price">
+                            @item.Price.ToString("#,##0") đ
+                        </div>
+
+                        <div class="product-actions">
+
+                            <a class="btn-soft" href="@Url.Action("Details", "Products", new { id = item.ProductID })">
+                                Details
+                            </a>
+
+                            <a class="btn-brand"
+                               href="@Url.Action("AddToCart", "Cart",
+                                   new { id = item.ProductID })">
+                                🛒 Thêm vào giỏ hàng
+                            </a>
+
+                        </div>
+
+                    </div>
+                </article>
+            }
+
+        </div>
+
+        <p id="noProducts">
+            Không có sản phẩm trong danh mục này.
+        </p>
+
+    </section>
+
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const categoryLinks =
+            document.querySelectorAll(".category-link");
+
+        const products =
+            document.querySelectorAll(".product-card");
+
+        const noProducts =
+            document.getElementById("noProducts");
+
+        // Hide the no-products message initially
+        noProducts.style.display = "none";
+
+        categoryLinks.forEach(function (link) {
+
+            link.addEventListener("click", function (event) {
+
+                event.preventDefault();
+
+                const selectedCategory = this.dataset.category;
+
+                let visibleCount = 0;
+
+                // Remove previous active category
+                categoryLinks.forEach(function (item) {
+                    item.classList.remove("active");
+                });
+
+                // Highlight selected category
+                this.classList.add("active");
+
+                // Filter products
+                products.forEach(function (product) {
+
+                    const productCategory =
+                        product.dataset.category;
+
+                    if (
+                        selectedCategory === "all" ||
+                        productCategory === selectedCategory
+                    ) {
+                        product.style.display = "flex";
+                        visibleCount++;
+                    }
+                    else {
+                        product.style.display = "none";
+                    }
+
+                });
+
+                // Display message if category is empty
+                if (visibleCount === 0) {
+                    noProducts.style.display = "block";
+                }
+                else {
+                    noProducts.style.display = "none";
+                }
+
+            });
+
+        });
+
+    });
+</script>
