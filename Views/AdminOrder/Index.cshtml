@@ -1,0 +1,130 @@
+﻿@model DBWineStore.Models.AdminOrderListViewModel
+@{
+    ViewBag.Title = "Manage orders";
+    Layout = "~/Views/Shared/_SettingLayout.cshtml";
+}
+<link href="~/CSS/History.css" rel="stylesheet" />
+<link href="~/CSS/admin-order.css" rel="stylesheet" />
+
+<div class="adm-page">
+    <h2>Quản lý đơn hàng</h2>
+
+    @if (TempData["Message"] != null)
+    {
+        <div class="order-alert">@TempData["Message"]</div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="adm-error">@TempData["Error"]</div>
+    }
+
+    <div class="adm-stats">
+        <div class="adm-stat"><span>@Model.TotalOrders</span>Tổng đơn hàng</div>
+        <div class="adm-stat warn"><span>@Model.WaitingOrders</span>Đang chờ xác nhận</div>
+        <div class="adm-stat warn"><span>@Model.UnpaidOrders</span>Chưa thanh toán</div>
+    </div>
+
+    @* ---------- Filters ---------- *@
+    @using (Html.BeginForm("Index", "AdminOrder", FormMethod.Get, new { @class = "adm-filter" }))
+    {
+        <input type="text" name="q" value="@Model.Keyword" placeholder="Order # or customer name..." />
+
+        <select name="payment">
+            <option value="">Tất cả trạng thái thanh toán</option>
+            @foreach (var s in Model.PaymentStatuses)
+            {
+                <option value="@s.ID" @(Model.PaymentFilter == s.ID ? "selected" : "")>@s.Name</option>
+            }
+        </select>
+
+        <select name="shipping">
+            <option value="">Tất cả trạng thái vận chuyển</option>
+            @foreach (var s in Model.ShippingStatuses)
+            {
+                <option value="@s.ID" @(Model.ShippingFilter == s.ID ? "selected" : "")>@s.Name</option>
+            }
+        </select>
+
+        <button type="submit" class="adm-btn">Filter</button>
+        <a class="adm-link" href="@Url.Action("Index", "AdminOrder")">Reset</a>
+    }
+
+    @* ---------- Orders ---------- *@
+    @if (!Model.Orders.Any())
+    {
+        <div class="order-empty">No orders found.</div>
+    }
+    else
+    {
+        <table class="order-table adm-table">
+            <thead>
+                <tr>
+                    <th>Order</th>
+                    <th>Date</th>
+                    <th>Customer</th>
+                    <th>Payment method</th>
+                    <th class="num">Total</th>
+                    <th>Payment status</th>
+                    <th>Shipping status</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var o in Model.Orders)
+                {
+                    <tr>
+                        @* One form per row: both dropdowns + Save belong to it *@
+                        @{ string formId = "f" + o.OrderID; }
+                        <td><a class="adm-link strong" href="@Url.Action("Details", "AdminOrder", new { id = o.OrderID })">#@o.OrderID</a></td>
+                        <td>@o.OrderDate.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>
+                            @o.CustomerName
+                            @if (!string.IsNullOrEmpty(o.RecipientName) && o.RecipientName != o.CustomerName)
+                            {
+                                <div class="adm-sub">Ship to: @o.RecipientName</div>
+                            }
+                        </td>
+                        <td>@(o.PaymentMethodName ?? "-")</td>
+                        <td class="num">@o.Total.ToString("N0") ₫</td>
+                        <td>
+                            <select name="paymentStatusId" form="@formId" class="adm-select js-track">
+                                @foreach (var s in Model.PaymentStatuses)
+                                {
+                                    <option value="@s.ID" @(o.PaymentStatusID == s.ID ? "selected" : "")>@s.Name</option>
+                                }
+                            </select>
+                        </td>
+                        <td>
+                            <select name="shippingStatusId" form="@formId" class="adm-select js-track">
+                                @foreach (var s in Model.ShippingStatuses)
+                                {
+                                    <option value="@s.ID" @(o.ShippingStatusID == s.ID ? "selected" : "")>@s.Name</option>
+                                }
+                            </select>
+                        </td>
+                        <td>
+                            @using (Html.BeginForm("UpdateStatus", "AdminOrder", FormMethod.Post, new { id = formId }))
+                            {
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="orderId" value="@o.OrderID" />
+                                <input type="hidden" name="returnUrl" value="@Request.Url.PathAndQuery" />
+                                <button type="submit" class="adm-btn js-save" disabled>Save</button>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+
+<script>
+    // Enable the Save button of a row only after one of its dropdowns was changed.
+    document.querySelectorAll('.js-track').forEach(function (sel) {
+        sel.addEventListener('change', function () {
+            var form = document.getElementById(sel.getAttribute('form'));
+            var btn = form.querySelector('.js-save');
+            btn.disabled = false;
+            sel.closest('tr').classList.add('adm-changed');
+        });
+    });</script>

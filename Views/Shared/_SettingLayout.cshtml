@@ -6,7 +6,7 @@
     <title>@ViewBag.Title - DBWineStore</title>
     <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="~/CSS/Setlayout.css" />
+    <link rel="stylesheet" href="@Url.Content("~/CSS/Setlayout.css")?v=99" />
 </head>
 <body>
 
@@ -29,47 +29,49 @@
                 string currentAction = ViewContext.RouteData.Values["action"]?.ToString();
             }
 
-            <ul class="nav-links">
-                <!-- Example: Active when Controller is 'Store' and Action is 'Index' -->
-                <li class="@(currentController == "AccountManage" && currentAction == "Index" ? "active" : "")">
-                    @if (currentController == "AccountManage" && currentAction == "Index")
-                    {<span class="active-indicator"></span>}
+        <ul class="nav-links">
+            <!-- Example: Active when Controller is 'Store' and Action is 'Index' -->
+            <li class="@(currentController == "AccountManage" && currentAction == "Index" ? "active" : "")">
+                @if (currentController == "AccountManage" && currentAction == "Index")
+                {<span class="active-indicator"></span>}
                 <a href="@Url.Action("Index", "AccountManage")">
                     <i class="fa-solid fa-users"></i>  <span class="placeholder-text">Danh mục Tk</span>
                 </a>
-                </li>
-
-                <!-- Example for Inventory/Warehouse -->
-                <li class="@(currentController == "OrderDetails" ? "active" : "")">
-                    @if (currentController == "OrderDetails")
-                    {<span class="active-indicator"></span>}
-                <a href="@Url.Action("Index", "OrderDetails")">
-                    <i class="fa-solid fa-receipt"></i>  <span class="placeholder-text">Kho rượu vang</span>
+            </li>
+            
+            <!-- Example for Cart / Orders -->
+            <li class="@(currentController == "Categories" ? "active" : "")">
+                @if (currentController == "Categories")
+                {<span class="active-indicator"></span>}
+                <a href="@Url.Action("Index", "Categories")">
+                    <i class="fa-solid fa-receipt"></i> <span class="placeholder-text">Quan Ly Danh Muc</span>
                 </a>
-                </li>
+            </li>
 
-                <!-- Example for Cart / Orders -->
-                <!--<li class="@(currentController == "Cart" ? "active" : "")">
-                    @if (currentController == "Cart")
-                    {<span class="active-indicator"></span>}
-                    <a href="@Url.Action("Index", "Cart")">
-                        <i class="fa-solid fa-receipt"></i> <span class="placeholder-text">Giỏ hàng & Đơn hàng</span>
-                    </a>
-                </li>
+            <!-- Example for Cart / Orders -->
+            <li class="@(currentController == "AdminOrder" ? "active" : "")">
+                @if (currentController == "AdminOrder")
+                {<span class="active-indicator"></span>}
+                <a href="@Url.Action("Index", "AdminOrder")">
+                    <i class="fa-solid fa-receipt"></i> <span class="placeholder-text">Quan Ly đơn hàng</span>
+                </a>
+            </li>
 
-                <li>
-                    <i class="fa-solid fa-users"></i> <span class="placeholder-text"></span>
-                </li>
-                <li>
-                    <i class="fa-solid fa-ticket"></i> <span class="placeholder-text">)</span>
-                </li>
-                <li>
-                    <i class="fa-solid fa-chart-line"></i> <span class="placeholder-text"></span>
-                </li>
-                <li>
-                    <i class="fa-solid fa-sliders"></i> <span class="placeholder-text"></span>
-                </li>-->
-            </ul>
+            @*<li>
+                <i class="fa-solid fa-chart-line"></i> <span class="placeholder-text"></span>
+            </li>
+
+            <li>
+                <i class="fa-solid fa-users"></i> <span class="placeholder-text"></span>
+            </li>
+            <li>
+                <i class="fa-solid fa-ticket"></i> <span class="placeholder-text">)</span>
+            </li>
+
+            <li>
+                <i class="fa-solid fa-sliders"></i> <span class="placeholder-text"></span>
+            </li>*@
+        </ul>
         </aside>
 
         <main class="main-content">

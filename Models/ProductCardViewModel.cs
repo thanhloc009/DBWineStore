@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
-
-namespace DBWineStore.Models
+﻿namespace DBWineStore.Models
 {
     public class ProductCardViewModel
     {
@@ -13,12 +7,12 @@ namespace DBWineStore.Models
         public string CategoryName { get; set; }
         public decimal Price { get; set; }
         public string ImagePro { get; set; }
+
+        // Tương thích view cũ
         public string ShortDescription { get; set; }
+
+        // Giống Sport
+        public string Description { get; set; }
+        public int StockQuantity { get; set; }
     }
-   
-
-
-           
-        
-    
 }

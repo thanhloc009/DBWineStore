@@ -1,5 +1,4 @@
-﻿
-@model DBWineStore.Models.Product
+﻿@model DBWineStore.Models.Product
 
 @{
     ViewBag.Title = "Create New Wine";
@@ -23,32 +22,30 @@
             @Html.AntiForgeryToken()
 
             <div class="create-grid">
-
-                <!-- PRODUCT INFORMATION -->
                 <div class="form-section">
                     <h3>Product Information</h3>
 
-                    @Html.ValidationSummary(true, "", new { @class = "validation-summary" })
+                    @Html.ValidationSummary(false, "", new { @class = "validation-summary" })
 
                     <div class="form-field">
                         @Html.LabelFor(m => m.ProductName, "Product Name")
                         @Html.TextBoxFor(m => m.ProductName,
-                            new { @class = "form-input", placeholder = "Enter product name" })
+                                      new { @class = "form-input", placeholder = "Enter product name" })
                         @Html.ValidationMessageFor(m => m.ProductName, "", new { @class = "field-error" })
                     </div>
 
                     <div class="form-field">
                         @Html.LabelFor(m => m.Description, "Description")
                         @Html.TextAreaFor(m => m.Description,
-                            new { @class = "form-input description-input", placeholder = "Enter product description" })
+                                      new { @class = "form-input description-input", placeholder = "Enter product description" })
                         @Html.ValidationMessageFor(m => m.Description, "", new { @class = "field-error" })
                     </div>
 
                     <div class="form-field">
                         @Html.LabelFor(m => m.CategoryID, "Category")
                         @Html.DropDownList("CategoryID", null,
-                            "-- Select Category --",
-                            new { @class = "form-input" })
+                                      "-- Select Category --",
+                                      new { @class = "form-input" })
                         @Html.ValidationMessageFor(m => m.CategoryID, "", new { @class = "field-error" })
                     </div>
 
@@ -56,14 +53,14 @@
                         <div class="form-field">
                             @Html.LabelFor(m => m.Price, "Price (VND)")
                             @Html.TextBoxFor(m => m.Price, "{0:0}",
-                                new { @class = "form-input", type = "number", step = "1", min = "0", placeholder = "Example: 790000" })
+                                          new { @class = "form-input", type = "number", step = "1", min = "0", placeholder = "Example: 790000" })
                             @Html.ValidationMessageFor(m => m.Price, "", new { @class = "field-error" })
                         </div>
 
                         <div class="form-field">
                             @Html.LabelFor(m => m.StockQuantity, "Stock Quantity")
                             @Html.TextBoxFor(m => m.StockQuantity,
-                                new { @class = "form-input", type = "number", min = "0", placeholder = "Enter quantity" })
+                                          new { @class = "form-input", type = "number", min = "0", placeholder = "Enter quantity" })
                             @Html.ValidationMessageFor(m => m.StockQuantity, "", new { @class = "field-error" })
                         </div>
                     </div>
@@ -73,25 +70,26 @@
                             <strong>Product Status</strong>
                             <small>Choose whether this product is available in your store.</small>
                         </div>
-
                         <label class="switch">
-                            @Html.CheckBoxFor(m => m.IsActive)
+                            <input type="hidden" name="IsActive" value="false" />
+                            <input type="checkbox" id="IsActive" name="IsActive" value="true"
+                                   @(Model != null && Model.IsActive ? "checked=\"checked\"" : null) />
                             <span class="switch-slider"></span>
                         </label>
                     </div>
                 </div>
 
-                <!-- IMAGE UPLOAD -->
                 <div class="form-section image-section">
                     <h3>Product Image</h3>
                     <p class="section-description">
-                        Choose an image from your computer.
+                        Choose an image from your computer. It will be saved to Content/images.
                     </p>
 
                     <div class="image-preview-box">
                         <img id="imagePreview"
                              src="@Url.Content("~/Content/images/no-image.png")"
-                             alt="Product preview" />
+                             alt="Product preview"
+                             onerror="this.src='@Url.Content("~/Content/images/no-image.png")';" />
                     </div>
 
                     <label for="imageFile" class="upload-button">
@@ -101,28 +99,19 @@
                     <input type="file"
                            id="imageFile"
                            name="imageFile"
-                           accept=".jpg,.jpeg,.png,.webp"
+                           accept=".jpg,.jpeg,.png,.webp,image/*"
                            hidden />
 
                     <p id="fileName" class="file-name">No image selected</p>
-
                     <p class="image-hint">
-                        Supported formats: JPG, JPEG, PNG, WEBP.
-                        Maximum size: 5 MB.
+                        Supported formats: JPG, JPEG, PNG, WEBP. Maximum size: 5 MB.
                     </p>
                 </div>
-
             </div>
 
-            <!-- ACTIONS -->
             <div class="create-actions">
-                <a href="@Url.Action("Index", "Product")" class="back-button">
-                    Cancel
-                </a>
-
-                <button type="submit" class="save-button">
-                    Create Wine
-                </button>
+                <a href="@Url.Action("Index", "Products")" class="back-button">Cancel</a>
+                <button type="submit" class="save-button">Create Wine</button>
             </div>
         }
     </div>
@@ -131,16 +120,18 @@
 <script>
     document.getElementById("imageFile").addEventListener("change", function () {
         const file = this.files[0];
-
         if (file) {
+            if (file.size > 5 * 1024 * 1024) {
+                alert("Image must be smaller than 5 MB.");
+                this.value = "";
+                document.getElementById("fileName").textContent = "No image selected";
+                return;
+            }
             document.getElementById("fileName").textContent = file.name;
-
             const reader = new FileReader();
-
             reader.onload = function (e) {
                 document.getElementById("imagePreview").src = e.target.result;
             };
-
             reader.readAsDataURL(file);
         }
     });

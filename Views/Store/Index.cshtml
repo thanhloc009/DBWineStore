@@ -1,196 +1,330 @@
-﻿
-@model IEnumerable<DBWineStore.Models.ProductCardViewModel>
+﻿@model DBWineStore.Models.StoreHomeViewModel
 
 @{
     ViewBag.Title = "Trang chủ";
     Layout = "~/Views/Shared/_StoreLayout.cshtml";
 
-    var categories = Model
-        .GroupBy(x => x.ProductID)
-        .Select(x => x.First())
-        .ToList();
+    // Giữ nguyên điều kiện lọc khi đổi danh mục / trang
+    Func<int?, int?, string> StoreUrl = (cat, pg) => Url.Action("Index", "Store", new
+    {
+        categoryId = cat,
+        keyword = Model.SearchTerm,
+        minPrice = Model.MinPrice,
+        maxPrice = Model.MaxPrice,
+        sortOrder = Model.SortOrder,
+        page = pg
+    });
+
+    var counts = ViewBag.CategoryCounts as System.Collections.Generic.Dictionary<int, int>;
+    int allCount = ViewBag.AllCount != null ? (int)ViewBag.AllCount : 0;
+
+    bool hasFilter = !string.IsNullOrWhiteSpace(Model.SearchTerm)
+                     || Model.MinPrice.HasValue
+                     || Model.MaxPrice.HasValue
+                     || Model.SelectedCategoryId.HasValue;
+
+    var selectedCategory = Model.SelectedCategoryId.HasValue
+        ? Model.Categories.FirstOrDefault(c => c.CategoryID == Model.SelectedCategoryId.Value)
+        : null;
 }
 
-<link rel="stylesheet" href="@Url.Content("~/CSS/Index.css")" />
+<link rel="stylesheet" href="@Url.Content("~/CSS/Index.css")?v=100" />
 
-<section class="hero">
-    <div>
-        <p>NEW COLLECTION / FINE WINES</p>
+<!-- ================= HERO ================= -->
+<div class="hero-wrap">
+    <section class="hero">
+        <span class="hero-orb orb-1"></span>
+        <span class="hero-orb orb-2"></span>
 
-        <h1>Khám phá thế giới rượu vang</h1>
+        <div class="hero-content">
+            <span class="hero-eyebrow"><i class="fa-solid fa-star"></i> NEW COLLECTION &middot; FINE WINES</span>
+            <h1>Khám phá thế giới <em>rượu vang</em></h1>
+            <p>
+                Tuyển chọn những chai vang đỏ, trắng, hồng và sủi
+                từ các vùng nổi tiếng thế giới.
+            </p>
 
-        <p>
-            Tuyển chọn những chai vang đỏ, trắng, hồng và sủi
-            từ các vùng nổi tiếng thế giới.
-        </p>
+            <div class="hero-cta">
+                <a class="btn-gold" href="#featured-products"><i class="fa-solid fa-wine-bottle"></i> Mua sắm ngay</a>
+                <a class="btn-ghost" href="@Url.Action("Index", "Cart")"><i class="fa-solid fa-ticket"></i> Mã KM10 giảm 10%</a>
+            </div>
 
-        <a class="btn-brand" href="#featured-products">
-            Mua sắm ngay
-        </a>
-    </div>
-</section>
+            <ul class="hero-perks">
+                <li><i class="fa-solid fa-truck-fast"></i> Miễn phí ship từ 1.500.000đ</li>
+                <li><i class="fa-solid fa-shield-halved"></i> Rượu chính hãng</li>
+                <li><i class="fa-solid fa-credit-card"></i> COD / Chuyển khoản</li>
+            </ul>
+        </div>
 
-<h2 class="section-title">Tất cả sản phẩm</h2>
+        <div class="hero-art" aria-hidden="true">
+            <i class="fa-solid fa-wine-glass"></i>
+            <i class="fa-solid fa-wine-bottle"></i>
+            <i class="fa-solid fa-champagne-glasses"></i>
+        </div>
+    </section>
+</div>
+
+@if (TempData["CartMessage"] != null)
+{
+    <div class="cart-message"><i class="fa-solid fa-circle-info"></i> @TempData["CartMessage"]</div>
+}
+
+<!-- ============ THANH TÌM KIẾM + LỌC GIÁ + SẮP XẾP ============ -->
+<div class="catalog-toolbar">
+    @using (Html.BeginForm("Index", "Store", FormMethod.Get, new { @class = "catalog-search" }))
+    {
+        if (Model.SelectedCategoryId.HasValue)
+        {
+            <input type="hidden" name="categoryId" value="@Model.SelectedCategoryId" />
+        }
+
+        <div class="field field-grow">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text"
+                   name="keyword"
+                   value="@Model.SearchTerm"
+                   placeholder="Tìm tên hoặc mô tả sản phẩm..."
+                   maxlength="50" />
+        </div>
+
+        <div class="field">
+            <i class="fa-solid fa-coins"></i>
+            <input type="number"
+                   name="minPrice"
+                   value="@Model.MinPrice"
+                   min="0"
+                   step="100000"
+                   placeholder="Giá từ"
+                   max="1000000000" />
+        </div>
+
+        <div class="field">
+            <i class="fa-solid fa-coins"></i>
+            <input type="number"
+                   name="maxPrice"
+                   value="@Model.MaxPrice"
+                   min="0"
+                   step="100000"
+                   placeholder="Giá đến"
+                   max="1000000000" />
+        </div>
+
+        <div class="field">
+            <i class="fa-solid fa-arrow-down-wide-short"></i>
+            <select name="sortOrder">
+                <option value="">Mới nhất</option>
+                <option value="price_asc" @(Model.SortOrder == "price_asc" ? "selected" : null)>Giá thấp → cao</option>
+                <option value="price_desc" @(Model.SortOrder == "price_desc" ? "selected" : null)>Giá cao → thấp</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn-brand"><i class="fa-solid fa-magnifying-glass"></i> Tìm kiếm</button>
+        <a class="btn-soft" href="@Url.Action("Index", "Store")"><i class="fa-solid fa-rotate-left"></i> Xóa lọc</a>
+    }
+
+    @* ---- Chip các bộ lọc đang áp dụng (bấm x để bỏ từng cái) ---- *@
+    @if (hasFilter)
+    {
+        <div class="filter-chips">
+            <span class="chips-label">Đang lọc:</span>
+
+            @if (selectedCategory != null)
+            {
+                <a class="chip" title="Bỏ lọc danh mục"
+                   href="@Url.Action("Index", "Store", new { keyword = Model.SearchTerm, minPrice = Model.MinPrice, maxPrice = Model.MaxPrice, sortOrder = Model.SortOrder })">
+                    @selectedCategory.CategoryName <i class="fa-solid fa-xmark"></i>
+                </a>
+            }
+            @if (!string.IsNullOrWhiteSpace(Model.SearchTerm))
+            {
+                <a class="chip" title="Bỏ từ khóa"
+                   href="@Url.Action("Index", "Store", new { categoryId = Model.SelectedCategoryId, minPrice = Model.MinPrice, maxPrice = Model.MaxPrice, sortOrder = Model.SortOrder })">
+                    “@Model.SearchTerm” <i class="fa-solid fa-xmark"></i>
+                </a>
+            }
+            @if (Model.MinPrice.HasValue)
+            {
+                <a class="chip" title="Bỏ giá từ"
+                   href="@Url.Action("Index", "Store", new { categoryId = Model.SelectedCategoryId, keyword = Model.SearchTerm, maxPrice = Model.MaxPrice, sortOrder = Model.SortOrder })">
+                    Từ @Model.MinPrice.Value.ToString("#,##0")đ <i class="fa-solid fa-xmark"></i>
+                </a>
+            }
+            @if (Model.MaxPrice.HasValue)
+            {
+                <a class="chip" title="Bỏ giá đến"
+                   href="@Url.Action("Index", "Store", new { categoryId = Model.SelectedCategoryId, keyword = Model.SearchTerm, minPrice = Model.MinPrice, sortOrder = Model.SortOrder })">
+                    Đến @Model.MaxPrice.Value.ToString("#,##0")đ <i class="fa-solid fa-xmark"></i>
+                </a>
+            }
+        </div>
+    }
+</div>
+
+<h2 class="section-title">
+    @if (hasFilter)
+    {
+        <text>Kết quả tìm kiếm</text>
+    }
+    else
+    {
+        <text>Tất cả sản phẩm</text>
+    }
+</h2>
 
 <div class="store-shell" id="featured-products">
 
-    <!-- CATEGORY SIDEBAR -->
+    <!-- ============ DANH MỤC ============ -->
     <aside class="category-panel">
-
-        <h3>Danh mục</h3>
-
+        <h3><i class="fa-solid fa-layer-group"></i> Danh mục</h3>
         <ul class="category-list">
-
-            @*<li>
-                    <a href="#"
-                       class="category-link active"
-                       data-category="all">
-                        Tất cả sản phẩm
+            <li>
+                <a href="@StoreUrl(null, null)"
+                   class="@(Model.SelectedCategoryId == null ? "active" : "")">
+                    <span><i class="fa-solid fa-border-all"></i> Tất cả sản phẩm</span>
+                    <small>@allCount</small>
+                </a>
+            </li>
+            @foreach (var category in Model.Categories)
+            {
+                int catCount = (counts != null && counts.ContainsKey(category.CategoryID)) ? counts[category.CategoryID] : 0;
+                <li>
+                    <a href="@StoreUrl(category.CategoryID, null)"
+                       class="@(Model.SelectedCategoryId == category.CategoryID ? "active" : "")">
+                        <span><i class="fa-solid fa-wine-bottle"></i> @category.CategoryName</span>
+                        <small>@catCount</small>
                     </a>
-                </li>*@
-
-            @*@foreach (var category in categories)
-                {
-                    <li>
-                        <a href="#"
-                           class="category-link"
-                           data-category="@category.ProductID<1">
-                            @category.CategoryName
-                        </a>
-                    </li>
-                }*@
-
+                </li>
+            }
         </ul>
-
     </aside>
 
-    <!-- PRODUCT LIST -->
     <section class="product-section">
-
-        <div class="product-grid">
-
-            @foreach (var item in Model)
+        <p class="result-count">
+            <i class="fa-solid fa-circle-check"></i>
+            Tìm thấy <strong>@Model.TotalItems</strong> sản phẩm
+            @if (Model.TotalPages > 1)
             {
-                <article class="product-card"
-                         data-category="@item.ProductID">
-
-                    <div class="product-image">
-                        <img src="@Url.Content("~/Content/images/" + item.ImagePro)"
-                             alt="@item.NamePro" />
-                    </div>
-
-                    <div class="product-body">
-
-                        <div class="product-category">
-                            @item.CategoryName
-                        </div>
-
-                        <div class="product-name">
-                            @item.NamePro
-                        </div>
-
-                        <div class="product-description">
-                            @(item.ShortDescription != null &&
-                              item.ShortDescription.Length > 60
-                                ? item.ShortDescription.Substring(0, 60) + "..."
-                                : item.ShortDescription)
-                        </div>
-
-                        <div class="product-price">
-                            @item.Price.ToString("#,##0") đ
-                        </div>
-
-                        <div class="product-actions">
-
-                            <a class="btn-soft" href="@Url.Action("Details", "Products", new { id = item.ProductID })">
-                                Details
-                            </a>
-
-                            <a class="btn-brand"
-                               href="@Url.Action("AddToCart", "Cart",
-                                   new { id = item.ProductID })">
-                                🛒 Thêm vào giỏ hàng
-                            </a>
-
-                        </div>
-
-                    </div>
-                </article>
+                <span class="page-note">&middot; Trang @Model.CurrentPage/@Model.TotalPages</span>
             }
-
-        </div>
-
-        <p id="noProducts">
-            Không có sản phẩm trong danh mục này.
         </p>
 
+        @if (Model.Products != null && Model.Products.Any())
+        {
+            int idx = 0;
+            <div class="product-grid">
+                @foreach (var item in Model.Products)
+                {
+                    bool outOfStock = item.StockQuantity <= 0;
+                    bool lowStock = !outOfStock && item.StockQuantity <= 5;
+
+                    <article class="product-card @(outOfStock ? "is-out" : "")" style="animation-delay:@(idx * 70)ms">
+                        <div class="product-image">
+                            @if (!string.IsNullOrEmpty(item.ImagePro))
+                            {
+                                <img loading="lazy"
+                                     src="@Url.Content("~/Content/images/" + item.ImagePro)"
+                                     alt="@item.NamePro" />
+                            }
+                            else
+                            {
+                                <div class="no-img"><i class="fa-solid fa-wine-bottle"></i></div>
+                            }
+
+                            <span class="tag-category">@item.CategoryName</span>
+
+                            @if (outOfStock)
+                            {
+                                <span class="tag-stock out">Hết hàng</span>
+                            }
+                            else if (lowStock)
+                            {
+                                <span class="tag-stock low"><i class="fa-solid fa-fire"></i> Chỉ còn @item.StockQuantity</span>
+                            }
+
+                            @*<a class="quick-view" href="@Url.Action("Details", "Products", new { id = item.ProductID })">
+                                <i class="fa-regular fa-eye"></i> Xem nhanh
+                            </a>*@
+                        </div>
+
+                        <div class="product-body">
+                            <div class="product-name">@item.NamePro</div>
+                            <div class="product-description">
+                                @{
+                                    var desc = item.Description ?? item.ShortDescription;
+                                }
+                                @(desc != null && desc.Length > 60 ? desc.Substring(0, 60) + "..." : desc)
+                            </div>
+                            <div class="product-price">@item.Price.ToString("#,##0") <span>đ</span></div>
+
+                            <div class="product-actions">
+                                <a class="btn-soft"
+                                   href="@Url.Action("Details", "Products", new { id = item.ProductID })">
+                                    Chi tiết
+                                </a>
+
+                                @if (!outOfStock)
+                                {
+                                    <a class="btn-brand"
+                                       href="@Url.Action("AddToCart", "Cart", new { id = item.ProductID })">
+                                        <i class="fa-solid fa-cart-plus"></i> Thêm vào giỏ
+                                    </a>
+                                }
+                                else
+                                {
+                                    <span class="btn-disabled">Hết hàng</span>
+                                }
+                            </div>
+                        </div>
+                    </article>
+
+                    idx++;
+                }
+            </div>
+        }
+        else
+        {
+            <div class="catalog-empty">
+                <div class="empty-icon"><i class="fa-solid fa-wine-glass-empty"></i></div>
+                <h3>Không tìm thấy sản phẩm phù hợp</h3>
+                <p>Không có sản phẩm nào phù hợp với điều kiện lọc hoặc từ khóa đang chọn.</p>
+                <a class="btn-brand" href="@Url.Action("Index", "Store")">Xem tất cả sản phẩm</a>
+            </div>
+        }
+
+        <!-- ============ PHÂN TRANG ============ -->
+        @if (Model.TotalPages > 1)
+        {
+            <div class="store-pagination">
+                @if (Model.CurrentPage > 1)
+                {
+                    <a href="@StoreUrl(Model.SelectedCategoryId, Model.CurrentPage - 1)"><i class="fa-solid fa-chevron-left"></i> Trước</a>
+                }
+
+                @for (int i = 1; i <= Model.TotalPages; i++)
+                {
+                    // chỉ hiện trang đầu, trang cuối và các trang gần trang hiện tại
+                    if (i == 1 || i == Model.TotalPages || Math.Abs(i - Model.CurrentPage) <= 2)
+                    {
+                        if (i == Model.CurrentPage)
+                        {
+                            <span class="active">@i</span>
+                        }
+                        else
+                        {
+                            <a href="@StoreUrl(Model.SelectedCategoryId, i)">@i</a>
+                        }
+                    }
+                    else if (Math.Abs(i - Model.CurrentPage) == 3)
+                    {
+                        <span class="dots">…</span>
+                    }
+                }
+
+                @if (Model.CurrentPage < Model.TotalPages)
+                {
+                    <a href="@StoreUrl(Model.SelectedCategoryId, Model.CurrentPage + 1)">Sau <i class="fa-solid fa-chevron-right"></i></a>
+                }
+            </div>
+        }
     </section>
-
 </div>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-
-        const categoryLinks =
-            document.querySelectorAll(".category-link");
-
-        const products =
-            document.querySelectorAll(".product-card");
-
-        const noProducts =
-            document.getElementById("noProducts");
-
-        // Hide the no-products message initially
-        noProducts.style.display = "none";
-
-        categoryLinks.forEach(function (link) {
-
-            link.addEventListener("click", function (event) {
-
-                event.preventDefault();
-
-                const selectedCategory = this.dataset.category;
-
-                let visibleCount = 0;
-
-                // Remove previous active category
-                categoryLinks.forEach(function (item) {
-                    item.classList.remove("active");
-                });
-
-                // Highlight selected category
-                this.classList.add("active");
-
-                // Filter products
-                products.forEach(function (product) {
-
-                    const productCategory =
-                        product.dataset.category;
-
-                    if (
-                        selectedCategory === "all" ||
-                        productCategory === selectedCategory
-                    ) {
-                        product.style.display = "flex";
-                        visibleCount++;
-                    }
-                    else {
-                        product.style.display = "none";
-                    }
-
-                });
-
-                // Display message if category is empty
-                if (visibleCount === 0) {
-                    noProducts.style.display = "block";
-                }
-                else {
-                    noProducts.style.display = "none";
-                }
-
-            });
-
-        });
-
-    });
-</script>

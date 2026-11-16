@@ -14,6 +14,8 @@ namespace DBWineStore.Models
         public string FullName { get; set; }
 
         [Display(Name = "Email")]
+        public string PassWordSalt { get; set; }
+
         public string Email { get; set; }
 
         [Display(Name = "Phone")]

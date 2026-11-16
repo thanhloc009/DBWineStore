@@ -26,9 +26,17 @@ namespace DBWineStore.Models
         public string ShippingAddress { get; set; }
         public decimal TotalAmount { get; set; }
         public string Status { get; set; }
+        public string RecipientName { get; set; }
+        public string ShippingPhone { get; set; }
+        public Nullable<int> PaymentMethodID { get; set; }
+        public Nullable<int> PaymentStatusID { get; set; }
+        public Nullable<int> ShippingStatusID { get; set; }
     
         public virtual Customer Customer { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<OrderDetail> OrderDetails { get; set; }
+        public virtual PaymentMethod PaymentMethod { get; set; }
+        public virtual PaymentStatu PaymentStatu { get; set; }
+        public virtual ShippingStatu ShippingStatu { get; set; }
     }
 }

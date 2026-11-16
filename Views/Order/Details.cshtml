@@ -1,0 +1,62 @@
+﻿@model DBWineStore.Models.OrderDetailsViewModel
+@{
+    ViewBag.Title = "Order #" + Model.OrderID;
+    Layout = "~/Views/Shared/_StoreLayout.cshtml";   // use your own layout if needed
+}
+<link href="~/CSS/History.css" rel="stylesheet" />
+
+<div class="order-page">
+    <a class="order-back" href="@Url.Action("History", "Order")">&lsaquo; Back to my orders</a>
+
+    <h2>Order #@Model.OrderID</h2>
+    <p class="order-meta">Placed on <b>@Model.OrderDate.ToString("dd/MM/yyyy HH:mm")</b></p>
+
+    @* ----- Progress of the order (set by the admin) ----- *@
+    <div class="order-badges big">
+        <span class="badge pay-@((Model.PaymentStatusCode ?? "").ToLower())">Payment: @(Model.PaymentStatusName ?? "-")</span>
+        <span class="badge ship-@((Model.ShippingStatusCode ?? "").ToLower())">Shipping: @(Model.ShippingStatusName ?? "-")</span>
+    </div>
+
+    <div class="order-ship">
+        <div><span>Recipient</span><b>@(string.IsNullOrEmpty(Model.RecipientName) ? "-" : Model.RecipientName)</b></div>
+        <div><span>Phone</span><b>@(string.IsNullOrEmpty(Model.ShippingPhone) ? "-" : Model.ShippingPhone)</b></div>
+        <div><span>Shipping address</span><b>@Model.ShippingAddress</b></div>
+        <div><span>Payment method</span><b>@(Model.PaymentMethodName ?? "-")</b></div>
+    </div>
+
+    <table class="order-table">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th class="num">Unit price</th>
+                <th class="num">Qty</th>
+                <th class="num">Subtotal</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Items)
+            {
+                <tr>
+                    <td>
+                        <div class="order-product">
+                            @if (!string.IsNullOrEmpty(item.ImageUrl))
+                            {
+                                <img src="@Url.Content("~/Content/images/" + item.ImageUrl)" alt="@item.ProductName" />
+                            }
+                            <span>@item.ProductName</span>
+                        </div>
+                    </td>
+                    <td class="num">@item.UnitPrice.ToString("N0") ₫</td>
+                    <td class="num">@item.Quantity</td>
+                    <td class="num">@item.LineTotal.ToString("N0") ₫</td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="3" class="num"><b>Total</b></td>
+                <td class="num order-grand">@Model.TotalAmount.ToString("N0") ₫</td>
+            </tr>
+        </tfoot>
+    </table>
+</div>

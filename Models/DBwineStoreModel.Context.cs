@@ -32,5 +32,8 @@ namespace DBWineStore.Models
         public virtual DbSet<Product> Products { get; set; }
         public virtual DbSet<Role> Roles { get; set; }
         public virtual DbSet<UserAccount> UserAccounts { get; set; }
+        public virtual DbSet<PaymentMethod> PaymentMethods { get; set; }
+        public virtual DbSet<PaymentStatu> PaymentStatus { get; set; }
+        public virtual DbSet<ShippingStatu> ShippingStatus { get; set; }
     }
 }

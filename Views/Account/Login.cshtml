@@ -4,7 +4,7 @@
     Layout = null;
     ViewBag.Title = "Login — Vignoble";
 }
-<link rel="stylesheet" href="~/CSS/Login.css" />
+<link rel="stylesheet" href="@Url.Content("~/CSS/Login.css")?v=99" />
 
 <div class="login-wrapper">
     <!-- Left: Image -->
@@ -19,12 +19,12 @@
         <h1>Welcome back</h1>
         <p class="subtitle">Sign in to your account to continue</p>
 
-        <div class="demo-hint">
+        @*<div class="demo-hint">
             <strong>Demo accounts (from database):</strong><br>
             <b>Admin</b> / Admin@123<br>
             <b>Customer01</b> / Customer@123<br>
             <b>Customer02</b> / Customer2@123
-        </div>
+        </div>*@
 
         @using (Html.BeginForm("Login", "Account", FormMethod.Post))
         {
@@ -50,7 +50,7 @@
                     @Html.CheckBoxFor(m => m.RememberMe)
                     @Html.DisplayNameFor(m => m.RememberMe)
                 </label>
-                <a href="#">Forgot password?</a>
+                @*<a href="#">Forgot password?</a>*@
             </div>
 
             <button type="submit" class="btn-login">Sign In</button>

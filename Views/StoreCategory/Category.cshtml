@@ -1,0 +1,121 @@
+﻿@model DBWineStore.Models.CategoriesOverviewViewModel
+
+@{
+    ViewBag.Title = "Danh mục sản phẩm — Vignoble";
+    Layout = "~/Views/Shared/_StoreLayout.cshtml";
+}
+
+<link rel="stylesheet" href="@Url.Content("~/CSS/categories.css")?v=1" />
+
+<div class="cx-page">
+
+    <!-- ============ BREADCRUMB ============ -->
+    <nav class="cx-crumbs" aria-label="breadcrumb">
+        <a href="@Url.Action("Index", "Store")"><i class="fa-solid fa-house"></i> Trang chủ</a>
+        <span class="sep">/</span>
+        <span class="current">Danh mục</span>
+    </nav>
+
+    <!-- ============ HEADER ============ -->
+    <header class="cx-head">
+        <span class="cx-eyebrow"><i class="fa-solid fa-layer-group"></i> BỘ SƯU TẬP</span>
+        <h1>Khám phá theo <em>danh mục</em></h1>
+        <p>
+            Chọn một danh mục để xem tất cả sản phẩm bên trong —
+            <b>@Model.Categories.Count</b> danh mục, <b>@Model.TotalProducts</b> sản phẩm đang bán.
+        </p>
+    </header>
+
+    <!-- ============ CATEGORY CARDS ============ -->
+    <div class="cx-grid">
+        @{ int idx = 0; }
+        @foreach (var c in Model.Categories)
+        {
+            // màu + biểu tượng + mô tả theo tên danh mục
+            string nm = (c.CategoryName ?? "").ToLower();
+            string theme = "theme-default";
+            string icon = "fa-wine-bottle";
+            string tagline = "Tuyển chọn những sản phẩm đặc sắc dành riêng cho bạn.";
+
+            if (nm.Contains("phụ kiện"))
+            {
+                theme = "theme-acc"; icon = "fa-gem";
+                tagline = "Dụng cụ và phụ kiện giúp thưởng thức rượu vang trọn vẹn hơn.";
+            }
+            else if (nm.Contains("đỏ"))
+            {
+                theme = "theme-red"; icon = "fa-wine-bottle";
+                tagline = "Đậm đà, ấm áp — hương quả mọng đen, gia vị và gỗ sồi.";
+            }
+            else if (nm.Contains("trắng"))
+            {
+                theme = "theme-white"; icon = "fa-wine-glass";
+                tagline = "Tươi mát, thanh thoát — hương hoa trắng và trái cây có múi.";
+            }
+            else if (nm.Contains("hồng") || nm.Contains("sủi"))
+            {
+                theme = "theme-rose"; icon = "fa-champagne-glasses";
+                tagline = "Nhẹ nhàng, rạng rỡ — bọt mịn cho mọi dịp đặc biệt.";
+            }
+
+            <a class="cx-card @theme" href="@Url.Action("Category", "Store", new { id = c.CategoryID })"
+               style="animation-delay:@(idx * 90)ms">
+
+                <div class="cx-top">
+                    <span class="cx-orb"></span>
+                    <span class="cx-count"><i class="fa-solid fa-wine-bottle"></i> @c.ProductCount sản phẩm</span>
+
+                    <div class="cx-previews">
+                        @if (c.PreviewImages != null && c.PreviewImages.Any())
+                        {
+                            foreach (var img in c.PreviewImages)
+                            {
+                                <span class="cx-photo"><img loading="lazy" src="@Url.Content("~/Content/images/" + img)" alt="" /></span>
+                            }
+                        }
+                        else
+                        {
+                            <span class="cx-bigicon"><i class="fa-solid @icon"></i></span>
+                        }
+                    </div>
+                </div>
+
+                <div class="cx-body">
+                    <div class="cx-title-row">
+                        <span class="cx-icon"><i class="fa-solid @icon"></i></span>
+                        <h3>@c.CategoryName</h3>
+                    </div>
+
+                    <p class="cx-tagline">@tagline</p>
+
+                    <div class="cx-foot">
+                        <div class="cx-price">
+                            @if (c.LowestPrice.HasValue)
+                            {
+                                <small>Giá từ</small>
+                                <b>@c.LowestPrice.Value.ToString("#,##0")đ</b>
+                            }
+                            else
+                            {
+                                <small>Sắp ra mắt</small>
+                            }
+                        </div>
+                        <span class="cx-go">Xem tất cả <i class="fa-solid fa-arrow-right"></i></span>
+                    </div>
+                </div>
+            </a>
+
+            idx++;
+        }
+
+        <!-- thẻ "Tất cả sản phẩm" -->
+        <a class="cx-card cx-all" href="@Url.Action("Index", "Store")" style="animation-delay:@(idx * 90)ms">
+            <div class="cx-all-inner">
+                <span class="cx-all-icon"><i class="fa-solid fa-border-all"></i></span>
+                <h3>Tất cả sản phẩm</h3>
+                <p>Xem toàn bộ @Model.TotalProducts sản phẩm, tìm kiếm và lọc theo giá.</p>
+                <span class="cx-go">Vào cửa hàng <i class="fa-solid fa-arrow-right"></i></span>
+            </div>
+        </a>
+    </div>
+</div>

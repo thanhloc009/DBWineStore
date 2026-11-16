@@ -13,9 +13,10 @@
     var topPicks = allProducts.OrderByDescending(p => p.Price).Take(4).ToList();
 }
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
 <link rel="stylesheet" href="~/CSS/Main.css" />
+
+
 
 <div class="all">
     <!-- ========== HERO ========== -->
@@ -133,7 +134,7 @@
                 <div class="category-block">
                     <div class="category-title">
                         <span><span class="cat-badge"></span>@cat.CategoryName</span>
-                        <a href="@Url.Action("ByCategory", "Product", new { id = cat.CategoryID })">View all →</a>
+                        <a href="@Url.Action("Index", "Store", new { id = cat.CategoryID })">View all →</a>
                     </div>
 
                     @if (productsInCat.Any())

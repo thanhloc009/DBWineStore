@@ -131,20 +131,31 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AccountManageController.cs" />
+    <Compile Include="Controllers\AdminOrderController.cs" />
     <Compile Include="Controllers\CartController.cs" />
+    <Compile Include="Controllers\CategoriesController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MainPageController.cs" />
-    <Compile Include="Controllers\OrderDetailsController.cs" />
+    <Compile Include="Controllers\OrderController.cs" />
+    <Compile Include="Controllers\OrderProesController.cs" />
     <Compile Include="Controllers\ProductsController.cs" />
+    <Compile Include="Controllers\StoreCategoryController.cs" />
     <Compile Include="Controllers\StoreController.cs" />
+    <Compile Include="Controllers\UserAccountsController.cs" />
+    <Compile Include="Filters\AdminAuthorizeAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\AccountManageViewModel.cs" />
+    <Compile Include="Models\AdminOrderViewModel.cs" />
+    <Compile Include="Models\Cart.cs" />
     <Compile Include="Models\CartItemViewModel.cs" />
+    <Compile Include="Models\CategoriesOverviewViewModel.cs" />
     <Compile Include="Models\Category.cs">
       <DependentUpon>DBwineStoreModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\CategoryPageViewModel.cs" />
+    <Compile Include="Models\CategoryViewModel.cs" />
     <Compile Include="Models\CheckoutViewModel.cs" />
     <Compile Include="Models\Customer.cs">
       <DependentUpon>DBwineStoreModel.tt</DependentUpon>
@@ -171,15 +182,27 @@
     <Compile Include="Models\OrderPro.cs">
       <DependentUpon>DBwineStoreModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\OrderViewModels.cs" />
+    <Compile Include="Models\PaymentMethod.cs">
+      <DependentUpon>DBwineStoreModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\PaymentStatu.cs">
+      <DependentUpon>DBwineStoreModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Product.cs">
       <DependentUpon>DBwineStoreModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\ProductCardViewModel.cs" />
-    <Compile Include="Models\RegisterViewModel.cs" />
+    <Compile Include="Models\ProfileViewModel.cs" />
+    <Compile Include="Views\RegisterViewModel.cs" />
     <Compile Include="Models\Role.cs">
       <DependentUpon>DBwineStoreModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\SearchViewModel.cs" />
+    <Compile Include="Models\ShippingStatu.cs">
+      <DependentUpon>DBwineStoreModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\StoreHomeViewModel.cs" />
     <Compile Include="Models\UserAccount.cs">
       <DependentUpon>DBwineStoreModel.tt</DependentUpon>
     </Compile>
@@ -203,9 +226,8 @@
     <Content Include="Content\bootstrap.rtl.css" />
     <Content Include="Content\bootstrap.rtl.min.css" />
     <Content Include="Content\images\banner.png" />
-    <Content Include="Content\images\download.png" />
+    <Content Include="Content\images\no-image.png" />
     <Content Include="Content\images\logo.png" />
-    <Content Include="Content\images\logo1.png" />
     <Content Include="Content\images\phukien-01.jpg" />
     <Content Include="Content\images\phukien-02.jpg" />
     <Content Include="Content\images\phukien-03.jpg" />
@@ -257,13 +279,20 @@
     <Content Include="Content\images\vangtrang-12.jpg" />
     <Content Include="Content\sitewine.css" />
     <Content Include="CSS\AccountIndex.css" />
+    <Content Include="CSS\admin-order.css" />
+    <Content Include="CSS\admin_category.css" />
+    <Content Include="CSS\category#.css" />
+    <Content Include="CSS\CateIndex.css" />
     <Content Include="CSS\create.css" />
     <Content Include="CSS\details.css" />
     <Content Include="CSS\Edit.css" />
+    <Content Include="CSS\History.css" />
     <Content Include="CSS\Index.css" />
     <Content Include="CSS\Index2.css" />
     <Content Include="CSS\Login.css" />
     <Content Include="CSS\Main.css" />
+    <Content Include="CSS\OrderIndex.css" />
+    <Content Include="CSS\product-delete.css" />
     <Content Include="CSS\Register.css" />
     <Content Include="CSS\Setlayout.css" />
     <Content Include="favicon.ico" />
@@ -323,7 +352,6 @@
     <Content Include="Views\Products\Create.cshtml" />
     <Content Include="Views\Products\Delete.cshtml" />
     <Content Include="Views\Products\Details.cshtml" />
-    <Content Include="Views\Products\Edit.cshtml" />
     <Content Include="Views\Products\Index.cshtml" />
     <Content Include="Views\Store\Index.cshtml" />
     <Content Include="Views\MainPage\Home.cshtml" />
@@ -333,6 +361,28 @@
     <Content Include="Views\Cart\Index.cshtml" />
     <Content Include="Views\Cart\Success.cshtml" />
     <Content Include="Views\Products\Search.cshtml" />
+    <Content Include="Views\Products\Edit.cshtml" />
+    <Content Include="Views\Categories\Create.cshtml" />
+    <Content Include="Views\Categories\Delete.cshtml" />
+    <Content Include="Views\Categories\Details.cshtml" />
+    <Content Include="Views\Categories\Edit.cshtml" />
+    <Content Include="Views\Categories\Index.cshtml" />
+    <Content Include="Views\OrderProes\Create.cshtml" />
+    <Content Include="Views\OrderProes\Delete.cshtml" />
+    <Content Include="Views\OrderProes\Details.cshtml" />
+    <Content Include="Views\OrderProes\Edit.cshtml" />
+    <Content Include="Views\OrderProes\Index.cshtml" />
+    <Content Include="Views\UserAccounts\Create.cshtml" />
+    <Content Include="Views\UserAccounts\Delete.cshtml" />
+    <Content Include="Views\UserAccounts\Details.cshtml" />
+    <Content Include="Views\UserAccounts\Edit.cshtml" />
+    <Content Include="Views\UserAccounts\Index.cshtml" />
+    <Content Include="Views\Account\Details.cshtml" />
+    <Content Include="Views\Order\History.cshtml" />
+    <Content Include="Views\Order\Details.cshtml" />
+    <Content Include="Views\AdminOrder\Index.cshtml" />
+    <Content Include="Views\AdminOrder\Details.cshtml" />
+    <Content Include="Views\StoreCategory\Category.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

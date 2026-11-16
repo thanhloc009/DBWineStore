@@ -1,0 +1,130 @@
+﻿/* Extra styles for the admin category pages (loaded after admin-order.css) */
+
+.adm-page .adm-titlebar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+    .adm-page .adm-titlebar h2 {
+        margin: 0;
+    }
+
+/* buttons made from <a> */
+.adm-page .adm-btn-link {
+    display: inline-block;
+    text-decoration: none;
+    line-height: 1.2;
+}
+
+.adm-page .adm-btn.ghost {
+    background: transparent;
+    color: #d17b88;
+    border: 1px solid #3a2630;
+}
+
+    .adm-page .adm-btn.ghost:hover {
+        background: rgba(165, 42, 69, .15);
+        color: #f0a1ad;
+        border-color: #a52a45;
+    }
+
+.adm-page .adm-btn.danger {
+    background: transparent;
+    color: #fca5a5;
+    border: 1px solid rgba(239, 68, 68, .4);
+}
+
+    .adm-page .adm-btn.danger:hover {
+        background: rgba(239, 68, 68, .18);
+        color: #fff;
+    }
+
+    .adm-page .adm-btn.danger:disabled {
+        background: transparent;
+        color: #6b5560;
+        border-color: #2d1d23;
+        cursor: not-allowed;
+    }
+
+/* row actions */
+.adm-page .adm-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.adm-page .adm-inline {
+    margin: 0;
+    display: inline;
+}
+
+/* product count pill */
+.adm-page .adm-count {
+    display: inline-block;
+    min-width: 34px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 700;
+    background: rgba(209, 73, 98, .18);
+    color: #f26b85;
+}
+
+    .adm-page .adm-count.empty {
+        background: #22161b;
+        color: #8c6a73;
+    }
+
+/* form card (Create / Edit) */
+.adm-page .adm-form-card {
+    max-width: 560px;
+    background: #181014;
+    border: 1px solid #2d1d23;
+    border-radius: 10px;
+    padding: 24px 26px;
+}
+
+    .adm-page .adm-form-card label {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: .8px;
+        color: #8c6a73;
+    }
+
+    .adm-page .adm-form-card input[type="text"] {
+        width: 100%;
+        padding: 11px 14px;
+        font-size: 15px;
+    }
+
+.adm-page .adm-form-note {
+    margin: 0 0 18px;
+    color: #c9b8be;
+}
+
+    .adm-page .adm-form-note b {
+        color: #f26b85;
+    }
+
+.adm-page .adm-field-error {
+    display: block;
+    margin-top: 6px;
+    font-size: 13px;
+    color: #fca5a5;
+}
+
+.adm-page .input-validation-error {
+    border-color: #ef4444 !important;
+}
+
+.adm-page .adm-form-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 22px;
+}

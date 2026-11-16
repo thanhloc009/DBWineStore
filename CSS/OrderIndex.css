@@ -1,0 +1,149 @@
+﻿
+/* =====================================
+   VIGNOBLE - ORDER DETAIL INDEX
+===================================== */
+/* Page */
+body {
+    font-family: 'Inter', sans-serif;
+    color: #333;
+}
+
+/* Page Header */
+/*h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 30px;
+    font-weight: 700;
+    color: #4A0E18;
+    margin: 30px 0 25px;
+    padding-bottom: 14px;
+    position: relative;
+    letter-spacing: 0.5px;
+}*/
+
+/*    h2::after {
+        content: "";
+        display: block;
+        width: 65px;
+        height: 3px;
+        background-color: #C9A227;
+        margin-top: 12px;
+        border-radius: 2px;
+    }*/
+
+/* Create New Button */
+p > a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 11px 24px;
+    background-color: #6B1E2A;
+    color: #F8F4EC !important;
+    border: 1px solid #6B1E2A;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none !important;
+    transition: all 0.3s ease;
+    margin-bottom: 18px;
+}
+
+    p > a:hover {
+        background-color: #4A0E18;
+        border-color: #4A0E18;
+        color: #C9A227 !important;
+        transform: translateY(-2px);
+    }
+
+/* Table */
+.table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background-color: #FFFFFF;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(74, 14, 24, 0.08);
+    margin-top: 10px;
+    border: 1px solid #EDE5D9;
+}
+
+    /* Table Header */
+    .table tr:first-child th {
+        background-color: #6B1E2A;
+        color: #F8F4EC;
+        font-family: 'Inter', sans-serif;
+        font-size: 14px;
+        font-weight: 600;
+        letter-spacing: 0.3px;
+        padding: 16px 18px;
+        border: none;
+        text-align: left;
+        white-space: nowrap;
+    }
+
+    /* Table Body */
+    .table td {
+        padding: 15px 18px;
+        vertical-align: middle;
+        border-top: 1px solid #F0E8DC;
+        color: #444;
+        font-size: 14px;
+    }
+
+    /* Alternating Rows */
+    .table tr:nth-child(even) {
+        background-color: #F8F4EC;
+    }
+
+    .table tr:nth-child(odd) {
+        background-color: #FFFFFF;
+    }
+
+    /* Hover Effect */
+    .table tr:hover td {
+        background-color: #F2E9DC;
+        transition: background-color 0.2s ease;
+    }
+
+    /* Action Links */
+    .table td:last-child {
+        white-space: nowrap;
+        min-width: 190px;
+    }
+
+        .table td:last-child a {
+            display: inline-block;
+            color: #6B1E2A;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            margin: 0 5px;
+            transition: all 0.2s ease;
+        }
+
+            .table td:last-child a:hover {
+                color: #C9A227;
+                text-decoration: underline;
+            }
+
+/* Responsive */
+@media (max-width: 768px) {
+    .table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+    h2 {
+        font-size: 24px;
+        margin: 25px 0 20px;
+    }
+
+    .table tr:first-child th,
+    .table td {
+        padding: 12px 14px;
+        font-size: 13px;
+    }
+}
+
+```

@@ -5,11 +5,11 @@
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
       <Diagram DiagramId="3453cc65306a4877939601f583890305" Name="Diagram1">
-        <EntityTypeShape EntityType="DBWineStoreModel.Category" Width="1.5" PointX="5.25" PointY="5.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="DBWineStoreModel.Category" Width="1.5" PointX="9.75" PointY="7.875" IsExpanded="true" />
         <EntityTypeShape EntityType="DBWineStoreModel.Customer" Width="1.5" PointX="5.25" PointY="1" IsExpanded="true" />
         <EntityTypeShape EntityType="DBWineStoreModel.OrderDetail" Width="1.5" PointX="9.75" PointY="1.125" IsExpanded="true" />
         <EntityTypeShape EntityType="DBWineStoreModel.OrderPro" Width="1.5" PointX="7.5" PointY="1" IsExpanded="true" />
-        <EntityTypeShape EntityType="DBWineStoreModel.Product" Width="1.5" PointX="7.5" PointY="4.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="DBWineStoreModel.Product" Width="1.5" PointX="9.75" PointY="4.125" IsExpanded="true" />
         <EntityTypeShape EntityType="DBWineStoreModel.Role" Width="1.5" PointX="0.75" PointY="1.5" IsExpanded="true" />
         <EntityTypeShape EntityType="DBWineStoreModel.UserAccount" Width="1.5" PointX="3" PointY="1" IsExpanded="true" />
         <AssociationConnector Association="DBWineStoreModel.FK_Product_Category" ManuallyRouted="false" />
@@ -18,6 +18,14 @@
         <AssociationConnector Association="DBWineStoreModel.FK_OrderDetail_OrderPro" ManuallyRouted="false" />
         <AssociationConnector Association="DBWineStoreModel.FK_OrderDetail_Product" ManuallyRouted="false" />
         <AssociationConnector Association="DBWineStoreModel.FK_UserAccount_Role" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="DBWineStoreModel.PaymentMethod" Width="1.5" PointX="3.75" PointY="4.5" />
+        <EntityTypeShape EntityType="DBWineStoreModel.PaymentStatu" Width="1.5" PointX="5.625" PointY="5.625" />
+        <EntityTypeShape EntityType="DBWineStoreModel.ShippingStatu" Width="1.5" PointX="7.875" PointY="5.75" />
+        <AssociationConnector Association="DBWineStoreModel.FK_OrderPro_PaymentMethod" ManuallyRouted="false" >
+        </AssociationConnector>
+        <AssociationConnector Association="DBWineStoreModel.FK_OrderPro_PaymentStatus" ManuallyRouted="false" >
+        </AssociationConnector>
+        <AssociationConnector Association="DBWineStoreModel.FK_OrderPro_ShippingStatus" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

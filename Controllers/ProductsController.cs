@@ -1,24 +1,81 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using DBWineStore.Models;
+//using DBWineStore.Filters;
 
 namespace DBWineStore.Controllers
 {
+    //[AdminAuthorize]
     public class ProductsController : Controller
     {
         private DBWineStoreEntities db = new DBWineStoreEntities();
-        private CartController cartController = new CartController();
+
+        private static readonly string[] AllowedExtensions = { ".jpg", ".jpeg", ".png", ".webp" };
+        private const int MaxImageBytes = 5 * 1024 * 1024;
+
+        // ---------- Helpers ----------
+
+        private void ValidateImage(HttpPostedFileBase imageFile)
+        {
+            if (imageFile == null || imageFile.ContentLength <= 0) return;
+
+            string extension = System.IO.Path.GetExtension(imageFile.FileName).ToLower();
+
+            if (!AllowedExtensions.Contains(extension))
+            {
+                ModelState.AddModelError("", "Invalid image format. Use JPG, JPEG, PNG or WEBP.");
+            }
+            else if (imageFile.ContentLength > MaxImageBytes)
+            {
+                ModelState.AddModelError("", "Image must be smaller than 5 MB.");
+            }
+        }
+
+        // Lưu vào ~/Content/images, giữ tên gốc (trùng thì -1, -2...)
+        // DB chỉ lưu tên file → Index: ~/Content/images/{ImageUrl}
+        private string SaveImage(HttpPostedFileBase imageFile)
+        {
+            string originalFileName = System.IO.Path.GetFileName(imageFile.FileName);
+            string fileNameWithoutExtension = System.IO.Path.GetFileNameWithoutExtension(originalFileName);
+            string extension = System.IO.Path.GetExtension(originalFileName).ToLower();
+
+            string folder = Server.MapPath("~/Content/images");
+
+            if (!System.IO.Directory.Exists(folder))
+            {
+                System.IO.Directory.CreateDirectory(folder);
+            }
+
+            string fileName = fileNameWithoutExtension + extension;
+            string path = System.IO.Path.Combine(folder, fileName);
+
+            int count = 1;
+            while (System.IO.File.Exists(path))
+            {
+                fileName = fileNameWithoutExtension + "-" + count + extension;
+                path = System.IO.Path.Combine(folder, fileName);
+                count++;
+            }
+
+            imageFile.SaveAs(path);
+            return fileName;
+        }
+
+        private void PopulateCategories(object selected = null)
+        {
+            ViewBag.CategoryID = new SelectList(db.Categories, "CategoryID", "CategoryName", selected);
+        }
+
+        // ---------- Search ----------
+
         [HttpGet]
         public ActionResult Search(string q)
         {
-            var products = db.Products
-                .Where(p => p.IsActive);
+            var products = db.Products.Where(p => p.IsActive);
 
             if (!string.IsNullOrWhiteSpace(q))
             {
@@ -57,26 +114,21 @@ namespace DBWineStore.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+
             Product product = db.Products.Find(id);
             if (product == null)
             {
                 return HttpNotFound();
             }
+
             return View(product);
         }
 
         // GET: Products/Create
-
-        // GET: Products/Create
         public ActionResult Create()
         {
-            ViewBag.CategoryID = new SelectList(
-                db.Categories,
-                "CategoryID",
-                "CategoryName"
-            );
-
-            return View();
+            PopulateCategories();
+            return View(new Product { IsActive = true });
         }
 
         // POST: Products/Create
@@ -84,62 +136,28 @@ namespace DBWineStore.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(
             [Bind(Include = "ProductName,Description,CategoryID,Price,StockQuantity,IsActive")]
-    Product product,
+            Product product,
             HttpPostedFileBase imageFile)
         {
-            if (imageFile != null && imageFile.ContentLength > 0)
-            {
-                string extension = System.IO.Path.GetExtension(imageFile.FileName).ToLower();
-
-                string[] allowedExtensions = { ".jpg", ".jpeg", ".png", ".webp" };
-
-                if (!allowedExtensions.Contains(extension))
-                {
-                    ModelState.AddModelError("", "Invalid image format.");
-                }
-                else if (imageFile.ContentLength > 5 * 1024 * 1024)
-                {
-                    ModelState.AddModelError("", "Image must be smaller than 5 MB.");
-                }
-            }
+            ValidateImage(imageFile);
 
             if (ModelState.IsValid)
             {
                 if (imageFile != null && imageFile.ContentLength > 0)
                 {
-                    string folder = Server.MapPath("~/Content/images/products/");
-
-                    if (!System.IO.Directory.Exists(folder))
-                    {
-                        System.IO.Directory.CreateDirectory(folder);
-                    }
-
-                    string fileName = Guid.NewGuid().ToString()
-                        + System.IO.Path.GetExtension(imageFile.FileName);
-
-                    string path = System.IO.Path.Combine(folder, fileName);
-
-                    imageFile.SaveAs(path);
-
-                    product.ImageUrl = "/Content/images/products/" + fileName;
+                    product.ImageUrl = SaveImage(imageFile);
                 }
 
                 db.Products.Add(product);
                 db.SaveChanges();
 
+                TempData["Success"] = "Wine created successfully.";
                 return RedirectToAction("Index");
             }
 
-            ViewBag.CategoryID = new SelectList(
-                db.Categories,
-                "CategoryID",
-                "CategoryName",
-                product.CategoryID
-            );
-
+            PopulateCategories(product.CategoryID);
             return View(product);
         }
-
 
         // GET: Products/Edit/5
         public ActionResult Edit(int? id)
@@ -148,29 +166,48 @@ namespace DBWineStore.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+
             Product product = db.Products.Find(id);
             if (product == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.CategoryID = new SelectList(db.Categories, "CategoryID", "CategoryName", product.CategoryID);
+
+            PopulateCategories(product.CategoryID);
             return View(product);
         }
 
         // POST: Products/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ProductID,ProductName,Description,CategoryID,Price,ImageUrl,StockQuantity,IsActive")] Product product)
+        public ActionResult Edit(Product product, HttpPostedFileBase imageFile)
         {
+            ValidateImage(imageFile);
+
             if (ModelState.IsValid)
             {
+                bool newImage = imageFile != null && imageFile.ContentLength > 0;
+
+                if (newImage)
+                {
+                    product.ImageUrl = SaveImage(imageFile);
+                }
+
                 db.Entry(product).State = EntityState.Modified;
+
+                // Không upload ảnh mới → giữ ImageUrl cũ
+                if (!newImage)
+                {
+                    db.Entry(product).Property(p => p.ImageUrl).IsModified = false;
+                }
+
                 db.SaveChanges();
+
+                TempData["Success"] = "Wine updated successfully.";
                 return RedirectToAction("Index");
             }
-            ViewBag.CategoryID = new SelectList(db.Categories, "CategoryID", "CategoryName", product.CategoryID);
+
+            PopulateCategories(product.CategoryID);
             return View(product);
         }
 
@@ -181,11 +218,13 @@ namespace DBWineStore.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+
             Product product = db.Products.Find(id);
             if (product == null)
             {
                 return HttpNotFound();
             }
+
             return View(product);
         }
 
@@ -195,6 +234,11 @@ namespace DBWineStore.Controllers
         public ActionResult DeleteConfirmed(int id)
         {
             Product product = db.Products.Find(id);
+            if (product == null)
+            {
+                return HttpNotFound();
+            }
+
             db.Products.Remove(product);
             db.SaveChanges();
             return RedirectToAction("Index");

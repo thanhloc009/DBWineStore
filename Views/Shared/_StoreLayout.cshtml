@@ -9,138 +9,230 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
     @Styles.Render("~/Content/css")
-    <link rel="stylesheet" href="~/Content/sitewine.css" />
+    <link rel="stylesheet" href= "@Url.Content("~/Content/sitewine.css")?v=99" />
     @Scripts.Render("~/bundles/modernizr")
-
-    
 </head>
 <body>
-    
+    @{
+        // Highlights the current page in the nav bar
+        string currentController = (ViewContext.RouteData.Values["controller"] as string) ?? "";
+        Func<string, string> act = c =>
+            currentController.Equals(c, StringComparison.OrdinalIgnoreCase) ? "active" : "";
 
-    <!-- Promo -->
+        // Cart badge
+        var cartItems = Session["Cart"] as
+            System.Collections.Generic.List<DBWineStore.Models.CartItemViewModel>;
+
+        int cartCount = 0;
+        if (cartItems != null)
+        {
+            foreach (var item in cartItems)
+            {
+                cartCount += item.Quantity;
+            }
+        }
+    }
+
+    <!-- Promo bar: three messages that fade in turn -->
     <div class="promo-bar">
-        Get FREE Shipping On 6+ Bottles Today
+        <div class="promo-track">
+            <span><i class="fa-solid fa-wine-bottle"></i> Mua sắm ngay để nhận ưu đãi đặc biệt!</span>
+            <span><i class="fa-solid fa-truck-fast"></i> Miễn phí vận chuyển cho đơn từ 1.500.000đ</span>
+            <span><i class="fa-solid fa-ticket"></i> Nhập mã <b>KM10</b> giảm ngay 10%</span>
+        </div>
     </div>
 
-    <!-- Main Header -->
-    <header class="main-header">
-        <a href="@Url.Action("Index", "Home")" class="logo-text">
-            Vignoble<span>.</span>
-        </a>
+    <!-- Sticky area: header + nav -->
+    <div class="site-top" id="siteTop">
 
-        <!-- Search: input div + button div -->
-        <div class="search-container">
-            @using (Html.BeginForm("Search","Product", FormMethod.Get,
-    new { @class = "search-form" }))
-            {
-                <div class="search-input">
-                    <input type="text"
-                           name="q"
-                           value="@Request.QueryString["q"]"
-                           placeholder="Search wine inventory..."
-                           aria-label="Search" />
-                </div>
-
-                <div class="search-button">
-                    <button type="submit" aria-label="Search Button">
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                    </button>
-                </div>
-            }
-        </div>
-
-        <div class="header-actions">
-
-            <!-- Account -->
-            @if (Session["UserID"] == null)
-            {
-                <a href="@Url.Action("Login", "Account")" class="btn-login-header">
-                    <i class="fa-regular fa-user"></i> Login
-                </a>
-            }
-            else
-            {
-                <div class="account-section">
-                    <button type="button" class="user-chip" id="accountBtn">
-                        <img class="avatar"
-                             src="https://placehold.co/68x68/6B1E2A/F8F4EC?text=@(Session["UserName"] != null && Session["UserName"].ToString().Length > 0 ? Session["UserName"].ToString().Substring(0, 1).ToUpper() : "U")"
-                             alt="Avatar" />
-                        <div class="user-meta">
-                            <span class="display-name">@(Session["FullName"] ?? Session["UserName"])</span>
-                            <span class="username">@@@Session["UserName"]</span>
-                        </div>
-                        <i class="fa-solid fa-chevron-down chevron"></i>
-                    </button>
-
-                    <div class="dropdown-menu" id="accountMenu">
-                        <a href="@Url.Action("Details", "Account")" class="dropdown-item">
-                            <i class="fa-solid fa-user"></i> My Account
-                        </a>
-                        @if (Session["RoleName"] != null && Session["RoleName"].ToString() == "Admin")
-                        {
-                            <a href="@Url.Action("Index", "AccountManage")" class="dropdown-item">
-                                <i class="fa-solid fa-box"></i> Manage Accounts
-                            </a>
-                        }
-                        <a href="@Url.Action("Logout", "Account")" class="dropdown-item logout">
-                            <i class="fa-solid fa-right-from-bracket"></i> Logout
-                        </a>
-                    </div>
-                </div>
-            }
-            @{
-                var cartItems = Session["Cart"] as
-                    System.Collections.Generic.List<DBWineStore.Models.CartItemViewModel>;
-
-                int cartCount = 0;
-
-                if (cartItems != null)
-                {
-                    foreach (var item in cartItems)
-                    {
-                        cartCount += item.Quantity;
-                    }
-                }
-            }
-            <!-- Cart -->
-            <a href="@Url.Action("Checkout","Cart")" class="cart-section">
-                <div class="cart-icon-wrapper">
-                    <i class="fa-solid fa-cart-shopping"></i>
-                    <span class="cart-badge">
-                        @cartCount
-                    </span>
-                </div>
-                <span>Cart</span>
+        <!-- Main Header -->
+        <header class="main-header">
+            <a href="@Url.Action("Home", "MainPage")" class="logo-text">
+                <i class="fa-solid fa-wine-glass-empty logo-icon"></i>
+                Vignoble<span>.</span>
             </a>
-        </div>
-    </header>
 
-    <!-- Nav -->
-    <header class="store-header">
-        <div class="container">
-            <a class="brand" href="@Url.Action("Home", "MainPage")">WINE<span>STORE</span></a>
-            <nav class="store-nav">
-                @Html.ActionLink("Trang chủ", "Home", "MainPage")
-                @Html.ActionLink("Quản lý Sản phẩm", "Index", "Products")
-                @Html.ActionLink("Mua Hang", "Index", "Store")
-                @Html.ActionLink("Đăng nhập", "Login", "Account")
-                @Html.ActionLink("Đăng ký", "Register", "Account")
-                @if (Session["RoleName"] != null && Session["RoleName"].ToString() == "Admin")
+            <!-- Search: submits to Store/Index so results appear on the store page -->
+            <div class="search-container">
+                @using (Html.BeginForm("Index", "Store", FormMethod.Get, new { @class = "search-form", role = "search" }))
                 {
-                    @Html.ActionLink("Quản lý TK", "Index", "AccountManage")
+                    <i class="fa-solid fa-magnifying-glass search-lead"></i>
+                    <div class="search-input">
+                        <input type="text"
+                               id="siteSearch"
+                               name="q"
+                               value="@Request.QueryString["q"]"
+                               placeholder="Tìm rượu vang theo tên...  ( nhấn / )"
+                               autocomplete="off"
+                               aria-label="Search" />
+                    </div>
+
+                    <div class="search-button">
+                        <button type="submit" aria-label="Search Button">Tìm kiếm</button>
+                    </div>
                 }
-            </nav>
+            </div>
+
+            <div class="header-actions">
+
+                <!-- Account -->
+                @if (Session["UserID"] == null)
+                {
+                    <a href="@Url.Action("Login", "Account")" class="btn-login-header">
+                        <i class="fa-regular fa-user"></i> Đăng nhập
+                    </a>
+                }
+                else
+                {
+                    <div class="account-section">
+                        <button type="button" class="user-chip" id="accountBtn">
+                            @{
+                                var avatarSession = Session["AvatarUrl"] as string;
+                                var avatarLetter = (Session["UserName"] != null && Session["UserName"].ToString().Length > 0)
+                                    ? Session["UserName"].ToString().Substring(0, 1).ToUpper()
+                                    : "U";
+                                var avatarSrc = !string.IsNullOrEmpty(avatarSession)
+                                    ? Url.Content(avatarSession)
+                                    : ("https://placehold.co/68x68/6B1E2A/F8F4EC?text=" + avatarLetter);
+                            }
+                            <img class="avatar" src="@avatarSrc" alt="Avatar" />
+                            <div class="user-meta">
+                                <span class="display-name">@(Session["FullName"] ?? Session["UserName"])</span>
+                                <span class="username">@@@Session["UserName"]</span>
+                            </div>
+                            <i class="fa-solid fa-chevron-down chevron"></i>
+                        </button>
+
+                        <div class="dropdown-menu" id="accountMenu">
+                            <a href="@Url.Action("Details", "Account")" class="dropdown-item">
+                                <i class="fa-solid fa-user"></i> Tài khoản của tôi
+                            </a>
+                            <a href="@Url.Action("History", "Order")" class="dropdown-item">
+                                <i class="fa-solid fa-receipt"></i> Lịch sử đơn hàng
+                            </a>
+                            @if (Session["RoleName"] != null && Session["RoleName"].ToString() == "Admin")
+                            {
+                                <a href="@Url.Action("Index", "AccountManage")" class="dropdown-item">
+                                    <i class="fa-solid fa-box"></i> Quản lý
+                                </a>
+                            }
+                            <a href="@Url.Action("Logout", "Account")" class="dropdown-item logout">
+                                <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
+                            </a>
+                        </div>
+                    </div>
+                }
+
+                <!-- Cart -->
+                <a href="@Url.Action("Index", "Cart")" class="cart-section">
+                    <div class="cart-icon-wrapper">
+                        <i class="fa-solid fa-cart-shopping"></i>
+                        <span class="cart-badge @(cartCount > 0 ? "has-items" : "")">@cartCount</span>
+                    </div>
+                    <span class="cart-label">Giỏ hàng</span>
+                </a>
+
+                <!-- Mobile menu button -->
+                <button type="button" class="nav-toggle" id="navToggle" aria-label="Menu">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Nav -->
+        <div class="store-header">
+            <div class="container">
+                <nav class="store-nav" id="storeNav">
+                    <a href="@Url.Action("Home", "MainPage")" class="@act("MainPage")"><i class="fa-solid fa-house"></i> Trang chủ</a>
+                    <a href="@Url.Action("Index", "Store")" class="@act("Store")"><i class="fa-solid fa-wine-bottle"></i> Mua hàng</a>
+                    <a href="@Url.Action("Index", "Products")" class="@act("Products")"><i class="fa-solid fa-square-plus"></i> Tạo sản phẩm</a>
+                    <a href="@Url.Action("History", "Order")" class="@act("Order")"><i class="fa-solid fa-receipt"></i> Lịch sử đơn hàng</a>
+                    @if (Session["UserID"] == null)
+                    {
+                        <a href="@Url.Action("Register", "Account")" class="@act("Account")"><i class="fa-solid fa-user-plus"></i> Đăng ký</a>
+                    }
+                </nav>
+            </div>
         </div>
-    </header>
+    </div>
 
     <div class="main-content">
         @RenderBody()
     </div>
 
+    <!-- Perks strip -->
+    <section class="perks">
+        <div class="perks-inner">
+            <div class="perk"><i class="fa-solid fa-truck-fast"></i><div><b>Miễn phí vận chuyển</b><span>Cho đơn từ 1.500.000đ</span></div></div>
+            <div class="perk"><i class="fa-solid fa-shield-halved"></i><div><b>Rượu chính hãng</b><span>Nguồn gốc rõ ràng</span></div></div>
+            <div class="perk"><i class="fa-solid fa-credit-card"></i><div><b>Thanh toán linh hoạt</b><span>COD hoặc chuyển khoản</span></div></div>
+            <div class="perk"><i class="fa-solid fa-headset"></i><div><b>Hỗ trợ tận tâm</b><span>Tư vấn chọn rượu</span></div></div>
+        </div>
+    </section>
+
     <footer class="site-footer">
-        <div class="logo">Vignoble.</div>
-        <p>Premium wines curated with passion. © 2026 Vignoble.</p>
+        <div class="footer-grid">
+            <div class="footer-col footer-brand">
+                <div class="logo"><i class="fa-solid fa-wine-glass-empty"></i> Vignoble<span>.</span></div>
+                <p>Rượu vang tuyển chọn với niềm đam mê — từ những chai vang đỏ đậm đà đến vang sủi tinh tế cho mọi dịp đặc biệt.</p>
+                <div class="footer-social">
+                    <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+                    <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+                </div>
+            </div>
+
+            <div class="footer-col">
+                <h4>Khám phá</h4>
+                <ul>
+                    <li><a href="@Url.Action("Home", "MainPage")">Trang chủ</a></li>
+                    <li><a href="@Url.Action("Index", "Store")">Mua hàng</a></li>
+                    <li><a href="@Url.Action("Index", "Cart")">Giỏ hàng</a></li>
+                    <li><a href="@Url.Action("History", "Order")">Lịch sử đơn hàng</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4>Hỗ trợ</h4>
+                <ul>
+                    <li><a href="@Url.Action("Details", "Account")">Tài khoản của tôi</a></li>
+                    <li><a href="@Url.Action("Index", "Cart")">Mã giảm giá KM10</a></li>
+                    <li><a href="#">Chính sách giao hàng</a></li>
+                    <li><a href="#">Chính sách đổi trả</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4>Liên hệ</h4>
+                <ul class="footer-contact">
+                    <li><i class="fa-solid fa-location-dot"></i> Huflit</li>
+                    <li><i class="fa-solid fa-phone"></i> yo</li>
+                    <li><i class="fa-solid fa-envelope"></i> thanhloc@vignoble.vn</li>
+                    <li><i class="fa-regular fa-clock"></i> 9:00 – 21:00 mỗi ngày</li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4>About us</h4>
+                <ul class="footer-contact">
+                    <li><i class="fa-solid fa-location-dot"></i> ThanhLoc</li>
+                    <li><i class="fa-solid fa-phone"></i> PlaceHolder</li>
+                    <li><i class="fa-solid fa-phone"></i> PlaceHolder</li>
+                    <li><i class="fa-solid fa-phone"></i> PlaceHolder</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <span>© 2026 Vignoble. Premium wines curated with passion.</span>
+            <span class="footer-warn"><i class="fa-solid fa-triangle-exclamation"></i> Uống có trách nhiệm. Không bán cho người dưới 18 tuổi.</span>
+        </div>
     </footer>
+
+    <button type="button" class="back-to-top" id="backToTop" aria-label="Lên đầu trang">
+        <i class="fa-solid fa-arrow-up"></i>
+    </button>
 
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
@@ -148,20 +240,56 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            // Account dropdown
             var btn = document.getElementById('accountBtn');
             var menu = document.getElementById('accountMenu');
-            if (!btn || !menu) return;
+            if (btn && menu) {
+                btn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    menu.classList.toggle('show');
+                });
+                document.addEventListener('click', function (e) {
+                    if (!menu.contains(e.target) && !btn.contains(e.target)) {
+                        menu.classList.remove('show');
+                    }
+                });
+            }
 
-            btn.addEventListener('click', function (e) {
-                e.stopPropagation();
-                menu.classList.toggle('show');
-            });
+            // Mobile nav
+            var toggle = document.getElementById('navToggle');
+            var nav = document.getElementById('storeNav');
+            if (toggle && nav) {
+                toggle.addEventListener('click', function () {
+                    nav.classList.toggle('open');
+                });
+            }
 
-            document.addEventListener('click', function (e) {
-                if (!menu.contains(e.target) && !btn.contains(e.target)) {
-                    menu.classList.remove('show');
+            // Press "/" to jump to the search box
+            var search = document.getElementById('siteSearch');
+            document.addEventListener('keydown', function (e) {
+                var tag = (e.target.tagName || '').toLowerCase();
+                if (e.key === '/' && search && tag !== 'input' && tag !== 'textarea') {
+                    e.preventDefault();
+                    search.focus();
                 }
             });
+
+            // Shadow on the sticky header + back-to-top button
+            var top = document.getElementById('siteTop');
+            var toTop = document.getElementById('backToTop');
+            function onScroll() {
+                var y = window.pageYOffset || document.documentElement.scrollTop;
+                if (top) top.classList.toggle('scrolled', y > 10);
+                if (toTop) toTop.classList.toggle('show', y > 400);
+            }
+            window.addEventListener('scroll', onScroll, { passive: true });
+            onScroll();
+
+            if (toTop) {
+                toTop.addEventListener('click', function () {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+            }
         });
     </script>
 </body>

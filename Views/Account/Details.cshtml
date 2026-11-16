@@ -1,0 +1,285 @@
+﻿@model DBWineStore.Models.ProfileViewModel
+
+@{
+    ViewBag.Title = "My Account";
+    Layout = "~/Views/Shared/_StoreLayout.cshtml";
+
+    string defaultAvatar = "https://placehold.co/140x140/6B1E2A/F8F4EC?text=" + (Model.UserName != null && Model.UserName.Length > 0 ? Model.UserName.Substring(0, 1).ToUpper() : "U");
+    string avatarSrc = !string.IsNullOrEmpty(Model.AvatarUrl)
+        ? Url.Content(Model.AvatarUrl)
+        : defaultAvatar;
+}
+
+<style>
+    .profile-page {
+        max-width: 920px;
+        margin: 32px auto 60px;
+        padding: 0 20px;
+        font-family: Inter, system-ui, sans-serif;
+    }
+
+    .profile-card {
+        background: #fff;
+        border: 1px solid #eee5dc;
+        border-radius: 18px;
+        box-shadow: 0 10px 30px rgba(74, 14, 24, 0.06);
+        overflow: hidden;
+    }
+
+    .profile-top {
+        background: linear-gradient(135deg, #4A0E18, #6B1E2A 55%, #8b3030);
+        color: #fff;
+        padding: 28px 28px 24px;
+        display: flex;
+        gap: 20px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .profile-top h1 {
+        margin: 0 0 6px;
+        font-size: 1.6rem;
+    }
+
+    .profile-top p {
+        margin: 0;
+        opacity: .9;
+        font-size: .92rem;
+    }
+
+    .profile-body {
+        padding: 28px;
+    }
+
+    .avatar-wrap {
+        text-align: center;
+        margin-bottom: 24px;
+    }
+
+    .avatar-preview {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid #f3ebe4;
+        box-shadow: 0 6px 18px rgba(0,0,0,.12);
+        background: #f8f4ec;
+    }
+
+    .avatar-actions {
+        margin-top: 12px;
+    }
+
+    .upload-btn {
+        display: inline-block;
+        padding: 8px 14px;
+        border-radius: 999px;
+        background: #f3ebe4;
+        color: #4A0E18;
+        font-weight: 600;
+        font-size: .86rem;
+        cursor: pointer;
+        border: 1px solid #e5d8cc;
+    }
+
+    .upload-btn:hover {
+        background: #eadfd4;
+    }
+
+    .reset-btn {
+        margin-left: 8px;
+        font-family: inherit;
+    }
+
+    .reset-btn:hover {
+        background: #f8d9de;
+        color: #8b1e2e;
+        border-color: #e8b4bc;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+    }
+
+    .form-field {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .form-field.full {
+        grid-column: 1 / -1;
+    }
+
+    .form-field label {
+        font-size: .86rem;
+        color: #6b534a;
+        font-weight: 600;
+    }
+
+    .form-field input,
+    .form-field textarea {
+        border: 1px solid #e5d8cc;
+        border-radius: 10px;
+        padding: 11px 12px;
+        font-size: .95rem;
+        color: #2b1d1a;
+        background: #faf8f6;
+    }
+
+    .form-field input[readonly] {
+        background: #f0ebe6;
+        color: #7a6660;
+    }
+
+    .form-actions {
+        margin-top: 22px;
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .btn-save {
+        background: #6B1E2A;
+        color: #fff;
+        border: 0;
+        border-radius: 999px;
+        padding: 12px 22px;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+    .btn-save:hover { background: #4A0E18; }
+
+    .btn-back {
+        background: #fff;
+        color: #4A0E18;
+        border: 1px solid #e5d8cc;
+        border-radius: 999px;
+        padding: 12px 22px;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .alert-success {
+        background: #e8f7ee;
+        color: #1e7e34;
+        border: 1px solid #b7ebc6;
+        padding: 12px 14px;
+        border-radius: 10px;
+        margin-bottom: 16px;
+    }
+
+    .field-error {
+        color: #c53030;
+        font-size: .82rem;
+    }
+
+    @*@media (max-width: 700px) {
+        .form-grid { grid-template-columns: 1fr; }
+    }*@
+</style>
+
+<div class="profile-page">
+    <div class="profile-card">
+        <div class="profile-top">
+            <div>
+                <h1>My Account</h1>
+                <p>Update your profile information and avatar</p>
+            </div>
+        </div>
+
+        <div class="profile-body">
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert-success">@TempData["Success"]</div>
+            }
+
+            @using (Html.BeginForm("Details", "Account", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(m => m.UserID)
+
+                <div class="avatar-wrap">
+                    <img id="avatarPreview" class="avatar-preview" src="@avatarSrc" data-default="@defaultAvatar" alt="Avatar" />
+                    <div class="avatar-actions">
+                        <label for="AvatarFile" class="upload-btn">Change photo</label>
+                        <button type="button" id="resetAvatar" class="upload-btn reset-btn">Reset photo</button>
+                        <input type="file" id="AvatarFile" name="AvatarFile" accept=".jpg,.jpeg,.png,.webp,image/*" hidden />
+                        @Html.HiddenFor(m => m.RemoveAvatar)
+                        @Html.ValidationMessageFor(m => m.AvatarFile, "", new { @class = "field-error" })
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-field">
+                        <label>Username</label>
+                        @Html.TextBoxFor(m => m.UserName, new { @readonly = "readonly" })
+                    </div>
+
+                    <div class="form-field">
+                        <label>Role</label>
+                        @Html.TextBoxFor(m => m.RoleName, new { @readonly = "readonly" })
+                    </div>
+
+                    <div class="form-field">
+                        @Html.LabelFor(m => m.FullName)
+                        @Html.TextBoxFor(m => m.FullName)
+                        @Html.ValidationMessageFor(m => m.FullName, "", new { @class = "field-error" })
+                    </div>
+
+                    <div class="form-field">
+                        @Html.LabelFor(m => m.Email)
+                        @Html.TextBoxFor(m => m.Email)
+                        @Html.ValidationMessageFor(m => m.Email, "", new { @class = "field-error" })
+                    </div>
+
+                    <div class="form-field">
+                        @Html.LabelFor(m => m.Phone)
+                        @Html.TextBoxFor(m => m.Phone)
+                    </div>
+
+                    <div class="form-field full">
+                        @Html.LabelFor(m => m.Address)
+                        @Html.TextAreaFor(m => m.Address, 3, 40, null)
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-save">Save changes</button>
+                    <a href="@Url.Action("Index", "Store")" class="btn-back">Back to store</a>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<script>
+    var fileInput = document.getElementById("AvatarFile");
+    var preview = document.getElementById("avatarPreview");
+    var removeFlag = document.getElementById("RemoveAvatar");
+
+    fileInput.addEventListener("change", function () {
+        var file = this.files[0];
+        if (!file) return;
+        if (file.size > 3 * 1024 * 1024) {
+            alert("Avatar must be smaller than 3 MB.");
+            this.value = "";
+            return;
+        }
+        removeFlag.value = "false";   // a new upload overrides a pending reset
+        var reader = new FileReader();
+        reader.onload = function (e) {
+            preview.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    });
+
+    document.getElementById("resetAvatar").addEventListener("click", function () {
+        fileInput.value = "";                  // drop any newly chosen file
+        preview.src = preview.dataset.default; // show the default avatar
+        removeFlag.value = "true";             // tell the server to remove the saved one
+    });
+</script>
