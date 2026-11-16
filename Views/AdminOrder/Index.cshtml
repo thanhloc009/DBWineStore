@@ -7,7 +7,7 @@
 <link href="~/CSS/admin-order.css" rel="stylesheet" />
 
 <div class="adm-page">
-    <h2>Order management</h2>
+    <h2>Quản lý đơn hàng</h2>
 
     @if (TempData["Message"] != null)
     {
@@ -19,9 +19,9 @@
     }
 
     <div class="adm-stats">
-        <div class="adm-stat"><span>@Model.TotalOrders</span>Total orders</div>
-        <div class="adm-stat warn"><span>@Model.WaitingOrders</span>Waiting for confirmation</div>
-        <div class="adm-stat warn"><span>@Model.UnpaidOrders</span>Unpaid</div>
+        <div class="adm-stat"><span>@Model.TotalOrders</span>Tổng đơn hàng</div>
+        <div class="adm-stat warn"><span>@Model.WaitingOrders</span>Đang chờ xác nhận</div>
+        <div class="adm-stat warn"><span>@Model.UnpaidOrders</span>Chưa thanh toán</div>
     </div>
 
     @* ---------- Filters ---------- *@
@@ -30,7 +30,7 @@
         <input type="text" name="q" value="@Model.Keyword" placeholder="Order # or customer name..." />
 
         <select name="payment">
-            <option value="">All payment statuses</option>
+            <option value="">Tất cả trạng thái thanh toán</option>
             @foreach (var s in Model.PaymentStatuses)
             {
                 <option value="@s.ID" @(Model.PaymentFilter == s.ID ? "selected" : "")>@s.Name</option>
@@ -38,7 +38,7 @@
         </select>
 
         <select name="shipping">
-            <option value="">All shipping statuses</option>
+            <option value="">Tất cả trạng thái vận chuyển</option>
             @foreach (var s in Model.ShippingStatuses)
             {
                 <option value="@s.ID" @(Model.ShippingFilter == s.ID ? "selected" : "")>@s.Name</option>
@@ -118,7 +118,8 @@
     }
 </div>
 
-<script>// Enable the Save button of a row only after one of its dropdowns was changed.
+<script>
+    // Enable the Save button of a row only after one of its dropdowns was changed.
     document.querySelectorAll('.js-track').forEach(function (sel) {
         sel.addEventListener('change', function () {
             var form = document.getElementById(sel.getAttribute('form'));

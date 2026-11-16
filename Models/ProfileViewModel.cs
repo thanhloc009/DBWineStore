@@ -32,5 +32,7 @@ namespace DBWineStore.Models
         public string AvatarUrl { get; set; }
 
         public HttpPostedFileBase AvatarFile { get; set; }
+
+        public bool RemoveAvatar { get; set; }
     }
 }

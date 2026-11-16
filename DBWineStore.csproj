@@ -194,7 +194,7 @@
     </Compile>
     <Compile Include="Models\ProductCardViewModel.cs" />
     <Compile Include="Models\ProfileViewModel.cs" />
-    <Compile Include="Models\RegisterViewModel.cs" />
+    <Compile Include="Views\RegisterViewModel.cs" />
     <Compile Include="Models\Role.cs">
       <DependentUpon>DBwineStoreModel.tt</DependentUpon>
     </Compile>

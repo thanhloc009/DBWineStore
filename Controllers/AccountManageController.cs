@@ -8,13 +8,19 @@ namespace DBWineStore.Controllers
     public class AccountManageController : Controller
     {
         private DBWineStoreEntities db = new DBWineStoreEntities();
-        private AccountManageViewModel viewModel;
 
         //Only Admin can access
         private bool IsAdmin()
         {
             return Session["RoleName"] != null &&
                    Session["RoleName"].ToString() == "Admin";
+        }
+
+        // True if the given user account has the Admin role
+        private bool IsAdminAccount(UserAccount user)
+        {
+            var role = db.Roles.Find(user.RoleID);
+            return role != null && role.RoleName == "Admin";
         }
 
         // GET: AccountManage
@@ -148,6 +154,13 @@ namespace DBWineStore.Controllers
 
             var user = db.UserAccounts.Find(id);
             if (user == null) return HttpNotFound();
+
+            // Admin accounts can never be deleted
+            if (IsAdminAccount(user))
+            {
+                TempData["Error"] = "Admin accounts cannot be deleted.";
+                return RedirectToAction("Index");
+            }
 
             if (Session["UserID"] != null && (int)Session["UserID"] == id)
             {

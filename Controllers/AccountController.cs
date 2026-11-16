@@ -44,6 +44,19 @@ namespace DBWineStore.Controllers
             return null;
         }
 
+        // Removes every saved avatar file for this user (resets to default)
+        private void DeleteAvatar(int userId)
+        {
+            string folder = Server.MapPath("~/Content/images/avatars");
+            if (!Directory.Exists(folder)) return;
+
+            foreach (var ext in AllowedAvatarExt)
+            {
+                string path = Path.Combine(folder, "user_" + userId + ext);
+                if (System.IO.File.Exists(path)) System.IO.File.Delete(path);
+            }
+        }
+
         private string SaveAvatar(int userId, HttpPostedFileBase file)
         {
             if (file == null || file.ContentLength <= 0) return null;
@@ -63,11 +76,7 @@ namespace DBWineStore.Controllers
             string folder = Server.MapPath("~/Content/images/avatars");
             if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
 
-            foreach (var ext in AllowedAvatarExt)
-            {
-                string oldPath = Path.Combine(folder, "user_" + userId + ext);
-                if (System.IO.File.Exists(oldPath)) System.IO.File.Delete(oldPath);
-            }
+            DeleteAvatar(userId);
 
             string fileName = "user_" + userId + extension;
             file.SaveAs(Path.Combine(folder, fileName));
@@ -242,6 +251,7 @@ namespace DBWineStore.Controllers
 
             if (model.AvatarFile != null && model.AvatarFile.ContentLength > 0)
             {
+                // A new upload takes priority over a reset
                 string avatarUrl = SaveAvatar(userId, model.AvatarFile);
                 if (!ModelState.IsValid) return View(model);
                 if (avatarUrl != null)
@@ -249,6 +259,12 @@ namespace DBWineStore.Controllers
                     model.AvatarUrl = avatarUrl;
                     Session["AvatarUrl"] = avatarUrl;
                 }
+            }
+            else if (model.RemoveAvatar)
+            {
+                DeleteAvatar(userId);
+                model.AvatarUrl = null;
+                Session["AvatarUrl"] = null;
             }
 
             db.SaveChanges();

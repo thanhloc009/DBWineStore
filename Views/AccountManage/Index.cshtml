@@ -2,14 +2,22 @@
 
 @{
     ViewBag.Title = "Account Management";
-    Layout ="~/Views/Shared/_SettingLayout.cshtml";
+    Layout = "~/Views/Shared/_SettingLayout.cshtml";
 }
 
-<link rel="stylesheet" href="@Url.Content("~/CSS/AccountIndex.css")?v=99" />
+<link rel="stylesheet" href="@Url.Content("~/CSS/AccountIndex.css")?v=100" />
 
 <div class="account-page">
     <div class="page-header">
-        <h1>Account Management</h1>
+        <div>
+            <h1>Quản lý tài khoản</h1>
+            <p class="page-sub">Quản lý tài khoản và mật khẩu</p>
+        </div>
+        <div class="stat-chips">
+            <span class="stat-chip"><b>@Model.Count()</b> Total</span>
+            <span class="stat-chip stat-active"><b>@Model.Count(x => x.IsActive)</b> Active</span>
+            <span class="stat-chip stat-admin"><b>@Model.Count(x => x.RoleName == "Admin")</b> Admins</span>
+        </div>
     </div>
 
     @if (TempData["Success"] != null)
@@ -21,53 +29,70 @@
         <div class="alert alert-error">@TempData["Error"]</div>
     }
 
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Username</th>
-                <th>Full Name</th>
-                <th>Email</th>
-                <th>PassWord</th>
-                <th>Role</th>
-                <th>Status</th>
-                <th>Created</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
+    <div class="table-wrap">
+        <table>
+            <thead>
                 <tr>
-                    <td>@item.UserID</td>
-                    <td><strong>@item.UserName</strong></td>
-                    <td>@item.FullName</td>
-                    <td>@(string.IsNullOrEmpty(item.Email) ? "—" : item.Email)</td>
-                    <td>@item.PassWordSalt</td>
-                    <td>
-                        <span class="badge @(item.RoleName == "Admin" ? "badge-admin" : "badge-customer")">
-                            @item.RoleName
-                        </span>
-                    </td>
-                    <td>
-                        <span class="badge @(item.IsActive ? "badge-active" : "badge-inactive")">
-                            @(item.IsActive ? "Active" : "Inactive")
-                        </span>
-                    </td>
-                    <td>@item.CreatedAt.ToString("dd/MM/yyyy")</td>
-                    <td class="action-btns">
-                        <a href="@Url.Action("Edit", new { id = item.UserID })" class="btn-edit">Edit</a>
-                        <a href="@Url.Action("ToggleActive", new { id = item.UserID })" class="btn-toggle">
-                            @(item.IsActive ? "Deactivate" : "Activate")
-                        </a>
-                        <a href="@Url.Action("Delete", new { id = item.UserID })"
-                           class="btn-delete"
-                           onclick="return confirm('Are you sure you want to delete this account?');">
-                            Delete
-                        </a>
-                    </td>
+                    <th>ID</th>
+                    <th>User</th>
+                    <th>Email</th>
+                    <th>PassWord</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th>Created</th>
+                    <th>Actions</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    var isAdminRow = item.RoleName == "Admin";
+                    var initial = string.IsNullOrEmpty(item.FullName) ? "?" : item.FullName.Substring(0, 1).ToUpper();
+                    <tr>
+                        <td class="id-cell">#@item.UserID</td>
+                        <td>
+                            <div class="user-cell">
+                                <span class="avatar @(isAdminRow ? "avatar-admin" : "")">@initial</span>
+                                <div>
+                                    <strong>@item.UserName</strong>
+                                    <small>@item.FullName</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>@(string.IsNullOrEmpty(item.Email) ? "—" : item.Email)</td>
+                        <td class="mono">@item.PassWordSalt</td>
+                        <td>
+                            <span class="badge @(isAdminRow ? "badge-admin" : "badge-customer")">
+                                @item.RoleName
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge @(item.IsActive ? "badge-active" : "badge-inactive")">
+                                @(item.IsActive ? "Active" : "Inactive")
+                            </span>
+                        </td>
+                        <td>@item.CreatedAt.ToString("dd/MM/yyyy")</td>
+                        <td class="action-btns">
+                            <a href="@Url.Action("Edit", new { id = item.UserID })" class="btn-edit">Edit</a>
+                            <a href="@Url.Action("ToggleActive", new { id = item.UserID })" class="btn-toggle">
+                                @(item.IsActive ? "Deactivate" : "Activate")
+                            </a>
+                            @if (isAdminRow)
+                            {
+                                <span class="btn-locked" title="Admin accounts cannot be deleted">🔒 Protected</span>
+                            }
+                            else
+                            {
+                                <a href="@Url.Action("Delete", new { id = item.UserID })"
+                                   class="btn-delete"
+                                   onclick="return confirm('Are you sure you want to delete this account?');">
+                                    Delete
+                                </a>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 </div>

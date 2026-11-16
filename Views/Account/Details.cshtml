@@ -4,9 +4,10 @@
     ViewBag.Title = "My Account";
     Layout = "~/Views/Shared/_StoreLayout.cshtml";
 
+    string defaultAvatar = "https://placehold.co/140x140/6B1E2A/F8F4EC?text=" + (Model.UserName != null && Model.UserName.Length > 0 ? Model.UserName.Substring(0, 1).ToUpper() : "U");
     string avatarSrc = !string.IsNullOrEmpty(Model.AvatarUrl)
         ? Url.Content(Model.AvatarUrl)
-        : "https://placehold.co/140x140/6B1E2A/F8F4EC?text=" + (Model.UserName != null && Model.UserName.Length > 0 ? Model.UserName.Substring(0, 1).ToUpper() : "U");
+        : defaultAvatar;
 }
 
 <style>
@@ -83,6 +84,17 @@
 
     .upload-btn:hover {
         background: #eadfd4;
+    }
+
+    .reset-btn {
+        margin-left: 8px;
+        font-family: inherit;
+    }
+
+    .reset-btn:hover {
+        background: #f8d9de;
+        color: #8b1e2e;
+        border-color: #e8b4bc;
     }
 
     .form-grid {
@@ -191,10 +203,12 @@
                 @Html.HiddenFor(m => m.UserID)
 
                 <div class="avatar-wrap">
-                    <img id="avatarPreview" class="avatar-preview" src="@avatarSrc" alt="Avatar" />
+                    <img id="avatarPreview" class="avatar-preview" src="@avatarSrc" data-default="@defaultAvatar" alt="Avatar" />
                     <div class="avatar-actions">
                         <label for="AvatarFile" class="upload-btn">Change photo</label>
+                        <button type="button" id="resetAvatar" class="upload-btn reset-btn">Reset photo</button>
                         <input type="file" id="AvatarFile" name="AvatarFile" accept=".jpg,.jpeg,.png,.webp,image/*" hidden />
+                        @Html.HiddenFor(m => m.RemoveAvatar)
                         @Html.ValidationMessageFor(m => m.AvatarFile, "", new { @class = "field-error" })
                     </div>
                 </div>
@@ -243,7 +257,11 @@
 </div>
 
 <script>
-    document.getElementById("AvatarFile").addEventListener("change", function () {
+    var fileInput = document.getElementById("AvatarFile");
+    var preview = document.getElementById("avatarPreview");
+    var removeFlag = document.getElementById("RemoveAvatar");
+
+    fileInput.addEventListener("change", function () {
         var file = this.files[0];
         if (!file) return;
         if (file.size > 3 * 1024 * 1024) {
@@ -251,10 +269,17 @@
             this.value = "";
             return;
         }
+        removeFlag.value = "false";   // a new upload overrides a pending reset
         var reader = new FileReader();
         reader.onload = function (e) {
-            document.getElementById("avatarPreview").src = e.target.result;
+            preview.src = e.target.result;
         };
         reader.readAsDataURL(file);
+    });
+
+    document.getElementById("resetAvatar").addEventListener("click", function () {
+        fileInput.value = "";                  // drop any newly chosen file
+        preview.src = preview.dataset.default; // show the default avatar
+        removeFlag.value = "true";             // tell the server to remove the saved one
     });
 </script>
