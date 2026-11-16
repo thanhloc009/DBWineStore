@@ -57,7 +57,9 @@
 .hero-bg {
     position: absolute;
     inset: 0;
-    background: url('../Content/images/The_Thumb_East_Capo_IIII_Meursault_Full.png') center center / cover no-repeat;
+    background: url('../Content/images/epic.png');
+    /*background: url('../Content/images/tenor (7).gif');*/
+    /*background: url('../Content/images/4icetea-ice-tea.gif');*/
     opacity: 0.85;
 }
 
