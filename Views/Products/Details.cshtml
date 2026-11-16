@@ -7,7 +7,7 @@
     int stock = Convert.ToInt32(Model.StockQuantity);
     bool active = Model.IsActive == true;
     bool canBuy = active && stock > 0;
-    string categoryName = Model.Category != null ? Model.Category.CategoryName : "ượu";
+    string categoryName = Model.Category != null ? Model.Category.CategoryName : "Rượu vang";
 
     string stockText;
     string stockClass;
@@ -31,14 +31,25 @@
         stockText = "Còn hàng";
         stockClass = "is-in";
     }
+
+    // Sản phẩm cùng danh mục (controller truyền qua ViewBag.RelatedProducts, có hay không đều được)
+    var related = ViewBag.RelatedProducts as System.Collections.Generic.List<DBWineStore.Models.Product>;
 }
 
-
-<link rel="stylesheet" href="~/CSS/details.css" />
-
+<link rel="stylesheet" href="@Url.Content("~/CSS/details.css")?v=100" />
 
 <div class="pd">
     <div class="pd-inner">
+
+        <!-- ========== BREADCRUMB ========== -->
+        <nav class="pd-crumbs" aria-label="breadcrumb">
+            <a href="@Url.Action("Index", "Store")"><i class="fa-solid fa-house"></i> Trang chủ</a>
+            <span class="sep">/</span>
+            <a href="@Url.Action("Index", "Store", new { categoryId = Model.CategoryID })">@categoryName</a>
+            <span class="sep">/</span>
+            <span class="current">@Model.ProductName</span>
+        </nav>
+
         <div class="pd-grid">
 
             <!-- ========== IMAGE ========== -->
@@ -46,7 +57,7 @@
                 <div class="pd-img-wrap">
                     @if (!string.IsNullOrEmpty(Model.ImageUrl))
                     {
-                        <img src="~/Content/images/@Model.ImageUrl" alt="@Model.ProductName" />
+                        <img src="@Url.Content("~/Content/images/" + Model.ImageUrl)" alt="@Model.ProductName" />
                     }
                     else
                     {
@@ -55,26 +66,33 @@
 
                     @if (active && stock > 0 && stock <= 15)
                     {
-                        <span class="pd-badge badge-hot">Hot Sale</span>
+                        <span class="pd-badge badge-hot"><i class="fa-solid fa-fire"></i> Hot Sale</span>
                     }
                     else if (active && stock > 15 && stock <= 25)
                     {
-                        <span class="pd-badge badge-limited">Limited</span>
+                        <span class="pd-badge badge-limited"><i class="fa-solid fa-gem"></i> Limited</span>
                     }
                     else if (active && stock >= 40)
                     {
-                        <span class="pd-badge badge-sale">Best Seller</span>
+                        <span class="pd-badge badge-sale"><i class="fa-solid fa-crown"></i> Best Seller</span>
+                    }
+
+                    @if (!canBuy)
+                    {
+                        <div class="pd-soldout">@(active ? "Hết hàng" : "Ngừng kinh doanh")</div>
                     }
                 </div>
             </div>
 
             <!-- ========== INFO ========== -->
             <div class="pd-info">
-                <a class="pd-cat" href="#">@categoryName</a>
+                <a class="pd-cat" href="@Url.Action("Index", "Store", new { categoryId = Model.CategoryID })">
+                    <i class="fa-solid fa-wine-bottle"></i> @categoryName
+                </a>
 
                 <h1 class="pd-title">@Model.ProductName</h1>
 
-                <div class="pd-price">@String.Format("{0:N0}₫", Model.Price)</div>
+                <div class="pd-price">@String.Format("{0:N0}", Model.Price)<span>₫</span></div>
 
                 <div class="pd-stock @stockClass">
                     <span class="dot"></span>@stockText
@@ -89,102 +107,122 @@
                     </p>
                 </div>
 
-                <!-- Buy box -->
+                <!-- ========== BUY BOX ========== -->
                 @if (canBuy)
                 {
-                    @* TODO: đổi "Add", "Cart" thành action giỏ hàng thật của bạn (tên action + controller) *@
-                    using (Html.BeginForm("Add", "Cart", FormMethod.Post, new { @class = "pd-buy" }))
-                    {
-                        <input type="hidden" name="productId" value="@Model.ProductID" />
-
+                    <div class="pd-buy">
                         @*<div class="pd-qty" data-max="@stock">
                             <button type="button" class="qty-btn" data-step="-1" aria-label="Giảm số lượng">
                                 <i class="fa-solid fa-minus"></i>
                             </button>
-                            <input type="number" name="quantity" value="1" min="1" max="@stock" inputmode="numeric" aria-label="Số lượng" />
+                            <input type="number" id="pdQty" value="1" min="1" max="@stock" inputmode="numeric" aria-label="Số lượng" />
                             <button type="button" class="qty-btn" data-step="1" aria-label="Tăng số lượng">
                                 <i class="fa-solid fa-plus"></i>
-                            </bu*@<!--tton>
-                        </div>-->
+                            </button>
+                        </div>*@
 
-                        <a class="btn-brand"
-                           href="@Url.Action("AddToCart","Cart", new { id = Model.ProductID })">
-                            🛒 Thêm vào giỏ hàng
+                        <a id="pdAdd" class="pd-add"
+                           data-base="@Url.Action("AddToCart", "Cart", new { id = Model.ProductID })"
+                           href="@Url.Action("AddToCart", "Cart", new { id = Model.ProductID })">
+                            <i class="fa-solid fa-cart-plus"></i> Thêm vào giỏ hàng
                         </a>
-                    }
+                    </div>
+                    <p class="pd-max-note">Tối đa <b>@stock</b> sản phẩm cho mỗi đơn.</p>
                 }
                 else
                 {
                     <div class="pd-buy">
-                        <button type="button" class="pd-btn-add" disabled>
+                        <button type="button" class="pd-add is-disabled" disabled>
                             <i class="fa-solid fa-ban"></i> Không thể đặt mua
                         </button>
                     </div>
                 }
 
+                <!-- Trust badges -->
+                <ul class="pd-trust">
+                    <li><i class="fa-solid fa-truck-fast"></i><span>Miễn phí ship từ 1.500.000₫</span></li>
+                    <li><i class="fa-solid fa-shield-halved"></i><span>Rượu chính hãng</span></li>
+                    <li><i class="fa-solid fa-credit-card"></i><span>COD / Chuyển khoản</span></li>
+                </ul>
+
                 <!-- Quick facts -->
                 <dl class="pd-meta">
                     <div><dt>Danh mục</dt><dd>@categoryName</dd></div>
-                    <div><dt>Mã sản phẩm</dt><dd>@Model.ProductID</dd></div>
+                    <div><dt>Mã sản phẩm</dt><dd>#@Model.ProductID</dd></div>
                     <div><dt>Tình trạng</dt><dd>@stockText</dd></div>
+                    <div><dt>Tồn kho</dt><dd>@Model.StockQuantity</dd></div>
                 </dl>
 
-                <a class="pd-back" href="#">
-                    <i class="fa-solid fa-arrow-left"></i>@Html.ActionLink("Xem thêm trong", "Index", "Store")"@categoryName"
-                </a>
+                <div class="pd-links">
+                    <a class="pd-back" href="@Url.Action("Index", "Store")">
+                        <i class="fa-solid fa-arrow-left"></i> Tiếp tục mua sắm
+                    </a>
+                    <a class="pd-back" href="@Url.Action("Index", "Store", new { categoryId = Model.CategoryID })">
+                        Xem thêm trong “@categoryName” <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                </div>
             </div>
         </div>
+
+        <!-- ========== RELATED ========== -->
+        @if (related != null && related.Any())
+        {
+            <section class="pd-related">
+                <h2 class="pd-related-title">Có thể bạn cũng thích</h2>
+                <div class="pd-related-grid">
+                    @foreach (var p in related)
+                    {
+                        <a class="pd-rel-card" href="@Url.Action("Details", "Products", new { id = p.ProductID })">
+                            <div class="pd-rel-img">
+                                @if (!string.IsNullOrEmpty(p.ImageUrl))
+                                {
+                                    <img loading="lazy" src="@Url.Content("~/Content/images/" + p.ImageUrl)" alt="@p.ProductName" />
+                                }
+                                else
+                                {
+                                    <i class="fa-solid fa-wine-bottle"></i>
+                                }
+                            </div>
+                            <div class="pd-rel-name">@p.ProductName</div>
+                            <div class="pd-rel-price">@String.Format("{0:N0}₫", p.Price)</div>
+                        </a>
+                    }
+                </div>
+            </section>
+        }
     </div>
 </div>
 
-<script>// Quantity +/- buttons (stays between 1 and the stock available)
-    document.querySelectorAll('.pd-qty').forEach(function (box) {
-        var input = box.querySelector('input');
+<script>
+    (function () {
+        var box = document.querySelector('.pd-qty');
+        var add = document.getElementById('pdAdd');
+        if (!box || !add) return;
+
+        var input = document.getElementById('pdQty');
         var max = parseInt(box.getAttribute('data-max')) || 1;
 
-        function clamp() {
+        // Keep the quantity between 1 and the stock, and put it in the add-to-cart link
+        function sync() {
             var v = parseInt(input.value);
             if (isNaN(v) || v < 1) v = 1;
             if (v > max) v = max;
             input.value = v;
+
+            var base = add.getAttribute('data-base');
+            add.href = base + (base.indexOf('?') > -1 ? '&' : '?') + 'quantity=' + v;
         }
 
         box.querySelectorAll('.qty-btn').forEach(function (btn) {
             btn.addEventListener('click', function () {
-                var v = (parseInt(input.value) || 1) + parseInt(btn.getAttribute('data-step'));
-                input.value = v;
-                clamp();
+                input.value = (parseInt(input.value) || 1) + parseInt(btn.getAttribute('data-step'));
+                sync();
             });
         });
-        input.addEventListener('change', clamp);
-        input.addEventListener('blur', clamp);
-        $(document).ready(function () {
 
-        $(".add-cart-btn").click(function () {
-
-            var productId = $(this).data("id");
-
-            $.ajax({
-                url: '@Url.Action("AddToCart", "Cart")',
-                type: "POST",
-                data: { id: productId },
-
-                success: function (result) {
-
-                    alert(result.message);
-
-                    if (result.success) {
-                        console.log("Cart quantity: " + result.cartCount);
-                    }
-
-                },
-
-                error: function () {
-                    alert("Something went wrong!");
-                }
-            });
-
-        });
-
-    });
-    });</script>
+        input.addEventListener('input', sync);
+        input.addEventListener('change', sync);
+        input.addEventListener('blur', sync);
+        sync();
+    })();
+</script>

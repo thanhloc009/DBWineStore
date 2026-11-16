@@ -1,0 +1,103 @@
+﻿@model DBWineStore.Models.AdminOrderDetailsViewModel
+@{
+    ViewBag.Title = "Order #" + Model.OrderID;
+    Layout = "~/Views/Shared/_SettingLayout.cshtml";   
+}
+<link href="~/CSS/History.css" rel="stylesheet" />
+<link href="~/CSS/admin-order.css" rel="stylesheet" />
+
+<div class="adm-page">
+    <a class="order-back" href="@Url.Action("Index", "AdminOrder")">&lsaquo; Back to all orders</a>
+
+    <h2>Order #@Model.OrderID</h2>
+
+    @if (TempData["Message"] != null)
+    {
+        <div class="order-alert">@TempData["Message"]</div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="adm-error">@TempData["Error"]</div>
+    }
+
+    <p class="order-meta">Placed on <b>@Model.OrderDate.ToString("dd/MM/yyyy HH:mm")</b> by <b>@Model.CustomerName</b></p>
+
+    <div class="adm-grid">
+        @* ----- Shipping info ----- *@
+        <div class="adm-box">
+            <h3>Shipping information</h3>
+            <div class="order-ship adm-ship-col">
+                <div><span>Recipient</span><b>@(string.IsNullOrEmpty(Model.RecipientName) ? "-" : Model.RecipientName)</b></div>
+                <div><span>Phone</span><b>@(string.IsNullOrEmpty(Model.ShippingPhone) ? "-" : Model.ShippingPhone)</b></div>
+                <div><span>Address</span><b>@Model.ShippingAddress</b></div>
+                <div><span>Payment method</span><b>@(Model.PaymentMethodName ?? "-")</b></div>
+            </div>
+        </div>
+
+        @* ----- Status control ----- *@
+        <div class="adm-box adm-control">
+            <h3>Update order status</h3>
+            @using (Html.BeginForm("UpdateStatus", "AdminOrder", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="orderId" value="@Model.OrderID" />
+                <input type="hidden" name="returnUrl" value="@Request.Url.PathAndQuery" />
+
+                <label>Payment status</label>
+                <select name="paymentStatusId" class="adm-select wide">
+                    @foreach (var s in Model.PaymentStatuses)
+                    {
+                        <option value="@s.ID" @(Model.PaymentStatusID == s.ID ? "selected" : "")>@s.Name</option>
+                    }
+                </select>
+
+                <label>Shipping status</label>
+                <select name="shippingStatusId" class="adm-select wide">
+                    @foreach (var s in Model.ShippingStatuses)
+                    {
+                        <option value="@s.ID" @(Model.ShippingStatusID == s.ID ? "selected" : "")>@s.Name</option>
+                    }
+                </select>
+
+                <button type="submit" class="adm-btn wide">Save changes</button>
+            }
+        </div>
+    </div>
+
+    @* ----- Items ----- *@
+    <table class="order-table">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th class="num">Unit price</th>
+                <th class="num">Qty</th>
+                <th class="num">Subtotal</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Items)
+            {
+                <tr>
+                    <td>
+                        <div class="order-product">
+                            @if (!string.IsNullOrEmpty(item.ImageUrl))
+                            {
+                                <img src="@Url.Content("~/Content/images/" + item.ImageUrl)" alt="@item.ProductName" />
+                            }
+                            <span>@item.ProductName</span>
+                        </div>
+                    </td>
+                    <td class="num">@item.UnitPrice.ToString("N0") ₫</td>
+                    <td class="num">@item.Quantity</td>
+                    <td class="num">@item.LineTotal.ToString("N0") ₫</td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="3" class="num"><b>Total</b></td>
+                <td class="num order-grand">@Model.TotalAmount.ToString("N0") ₫</td>
+            </tr>
+        </tfoot>
+    </table>
+</div>

@@ -33,6 +33,7 @@ namespace DBWineStore.Controllers
                                 UserName = u.UserName,
                                 FullName = c != null ? c.FullName : u.UserName,
                                 Email = c != null ? c.Email : "",
+                                PassWordSalt = u.PasswordSalt,
                                 Phone = c != null ? c.Phone : "",
                                 RoleName = r.RoleName,
                                 RoleID = u.RoleID,

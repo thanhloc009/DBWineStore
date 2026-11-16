@@ -1,0 +1,124 @@
+﻿/* ===== Category Index Page ===== */
+
+/* Page header */
+h2 {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #e8d5b7; /* soft wine-gold accent */
+}
+
+/* "Create New" link */
+p > a {
+    display: inline-block;
+    background-color: #722f37; /* deep wine red */
+    color: #fff !important;
+    padding: 0.5rem 1.25rem;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background-color 0.2s ease, transform 0.15s ease;
+    margin-bottom: 1.5rem;
+}
+
+    p > a:hover {
+        background-color: #5a252c;
+        transform: translateY(-1px);
+        text-decoration: none;
+    }
+
+/* Table styling */
+.table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background-color: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    margin-top: 0.5rem;
+}
+
+    /* Table header */
+    .table thead th,
+    .table tr:first-child th {
+        background-color: #722f37;
+        color: #fff;
+        font-weight: 600;
+        font-size: 0.95rem;
+        letter-spacing: 0.3px;
+        padding: 0.9rem 1rem;
+        border: none;
+        text-align: left;
+    }
+
+    /* Table body cells */
+    .table td {
+        padding: 0.85rem 1rem;
+        vertical-align: middle;
+        border-top: 1px solid #f0e6d8;
+        color: #333;
+        font-size: 0.95rem;
+    }
+
+    /* Alternating row colors */
+    .table tbody tr:nth-child(even) {
+        background-color: #faf7f2;
+    }
+
+    .table tbody tr:nth-child(odd) {
+        background-color: #ffffff;
+    }
+
+    /* Hover effect */
+    .table tbody tr:hover {
+        background-color: #f5ebe0;
+        transition: background-color 0.15s ease;
+    }
+
+    /* Category name column */
+    .table td:first-child {
+        font-weight: 500;
+        color: #2c3e50;
+    }
+
+    /* Action links column */
+    .table td:last-child {
+        white-space: nowrap;
+        font-size: 0.9rem;
+        width: 220px; /* keeps the actions column neat */
+    }
+
+        .table td:last-child a {
+            color: #722f37;
+            text-decoration: none;
+            font-weight: 500;
+            margin: 0 0.25rem;
+            transition: color 0.15s ease;
+        }
+
+            .table td:last-child a:hover {
+                color: #5a252c;
+                text-decoration: underline;
+            }
+
+/* Responsive */
+@media (max-width: 768px) {
+    .table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+        .table thead th,
+        .table td {
+            padding: 0.7rem 0.8rem;
+            font-size: 0.9rem;
+        }
+
+            .table td:last-child {
+                width: auto;
+            }
+}

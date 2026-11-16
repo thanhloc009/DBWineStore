@@ -2,10 +2,10 @@
 
 @{
     ViewBag.Title = "Account Management";
-    Layout = "~/Views/Shared/_SettingLayout.cshtml";
+    Layout ="~/Views/Shared/_SettingLayout.cshtml";
 }
 
-<link rel="stylesheet" href="~/CSS/AccountIndex.css" />
+<link rel="stylesheet" href="@Url.Content("~/CSS/AccountIndex.css")?v=99" />
 
 <div class="account-page">
     <div class="page-header">
@@ -28,6 +28,7 @@
                 <th>Username</th>
                 <th>Full Name</th>
                 <th>Email</th>
+                <th>PassWord</th>
                 <th>Role</th>
                 <th>Status</th>
                 <th>Created</th>
@@ -42,6 +43,7 @@
                     <td><strong>@item.UserName</strong></td>
                     <td>@item.FullName</td>
                     <td>@(string.IsNullOrEmpty(item.Email) ? "—" : item.Email)</td>
+                    <td>@item.PassWordSalt</td>
                     <td>
                         <span class="badge @(item.RoleName == "Admin" ? "badge-admin" : "badge-customer")">
                             @item.RoleName

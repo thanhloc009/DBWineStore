@@ -1,0 +1,31 @@
+﻿@model DBWineStore.Models.CategoryFormViewModel
+@{
+    ViewBag.Title = "Sửa danh mục";
+    Layout = "~/Views/Shared/_SettingLayout.cshtml";
+}
+<link href="~/CSS/admin-order.css" rel="stylesheet" />
+<link href="~/CSS/admin-category.css" rel="stylesheet" />
+
+<div class="adm-page">
+    <a class="order-back" href="@Url.Action("Index", "Categories")">&lsaquo; Quay lại danh sách danh mục</a>
+    <h2>Sửa danh mục #@Model.CategoryID</h2>
+
+    <div class="adm-form-card">
+        <p class="adm-form-note">Danh mục này đang có <b>@Model.ProductCount</b> sản phẩm.</p>
+
+        @using (Html.BeginForm("Edit", "Categories", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(m => m.CategoryID)
+
+            <label for="CategoryName">Tên danh mục</label>
+            @Html.TextBoxFor(m => m.CategoryName, new { maxlength = 100 })
+            @Html.ValidationMessageFor(m => m.CategoryName, "", new { @class = "adm-field-error" })
+
+            <div class="adm-form-actions">
+                <button type="submit" class="adm-btn">Lưu thay đổi</button>
+                <a class="adm-btn adm-btn-link ghost" href="@Url.Action("Index", "Categories")">Hủy</a>
+            </div>
+        }
+    </div>
+</div>

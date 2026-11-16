@@ -1,0 +1,85 @@
+﻿@model DBWineStore.Models.CategoryListViewModel
+@{
+    ViewBag.Title = "Quản lý danh mục";
+    Layout = "~/Views/Shared/_SettingLayout.cshtml";
+}
+<link href="~/CSS/admin-order.css" rel="stylesheet" />
+<link href="~/CSS/admin_category.css" rel="stylesheet" />
+
+<div class="adm-page">
+    <div class="adm-titlebar">
+        <h2>Quản lý danh mục</h2>
+        <a class="adm-btn adm-btn-link" href="@Url.Action("Create", "Categories")">+ Thêm danh mục</a>
+    </div>
+
+    @if (TempData["Message"] != null)
+    {
+        <div class="order-alert">@TempData["Message"]</div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="adm-error">@TempData["Error"]</div>
+    }
+
+    <div class="adm-stats">
+        <div class="adm-stat"><span>@Model.TotalCategories</span>Danh mục</div>
+        <div class="adm-stat"><span>@Model.TotalProducts</span>Tổng sản phẩm</div>
+    </div>
+
+    @using (Html.BeginForm("Index", "Categories", FormMethod.Get, new { @class = "adm-filter" }))
+    {
+        <input type="text" name="q" value="@Model.Keyword" placeholder="Tìm theo tên danh mục..." />
+        <button type="submit" class="adm-btn">Tìm kiếm</button>
+        <a class="adm-link" href="@Url.Action("Index", "Categories")">Đặt lại</a>
+    }
+
+    @if (!Model.Categories.Any())
+    {
+        <div class="order-empty">Không tìm thấy danh mục nào.</div>
+    }
+    else
+    {
+        <table class="order-table adm-table">
+            <thead>
+                <tr>
+                    <th style="width:80px">Mã</th>
+                    <th>Tên danh mục</th>
+                    <th class="num" style="width:140px">Sản phẩm</th>
+                    <th class="num" style="width:220px">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var c in Model.Categories)
+                {
+                    <tr>
+                        <td>#@c.CategoryID</td>
+                        <td><b>@c.CategoryName</b></td>
+                        <td class="num">
+                            <span class="adm-count @(c.ProductCount == 0 ? "empty" : "")">@c.ProductCount</span>
+                        </td>
+                        <td class="num">
+                            <div class="adm-actions">
+                                <a class="adm-btn adm-btn-link ghost" href="@Url.Action("Edit", "Categories", new { id = c.CategoryID })">Sửa</a>
+
+                                @using (Html.BeginForm("Delete", "Categories", FormMethod.Post,
+                                    new { @class = "adm-inline", onsubmit = "return confirm('Xóa danh mục \"" + c.CategoryName + "\"?');" }))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@c.CategoryID" />
+                                    if (c.ProductCount > 0)
+                                    {
+                                        <button type="submit" class="adm-btn danger" disabled title="Còn sản phẩm trong danh mục, không thể xóa">Xóa</button>
+                                    }
+                                    else
+                                    {
+                                        <button type="submit" class="adm-btn danger">Xóa</button>
+                                    }
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

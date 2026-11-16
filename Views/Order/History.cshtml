@@ -1,0 +1,46 @@
+﻿@model List<DBWineStore.Models.OrderSummaryViewModel>
+@{
+    ViewBag.Title = "Order history";
+    Layout = "~/Views/Shared/_StoreLayout.cshtml";   // use your own layout if needed
+}
+<link href="~/CSS/History.css" rel="stylesheet" />
+
+<div class="order-page">
+    <h2>My orders</h2>
+
+    @if (TempData["Message"] != null)
+    {
+        <div class="order-alert">@TempData["Message"]</div>
+    }
+
+    @if (ViewBag.NeedLogin == true)
+    {
+        <div class="order-empty">Please log in, or place an order, to see your order history.</div>
+    }
+    else if (Model == null || !Model.Any())
+    {
+        <div class="order-empty">You haven't placed any orders yet.</div>
+    }
+    else
+    {
+        <div class="order-list">
+            @foreach (var o in Model)
+            {
+                <a class="order-card" href="@Url.Action("Details", "Order", new { id = o.OrderID })">
+                    <div class="order-card-main">
+                        <span class="order-id">Order #@o.OrderID</span>
+                        <span class="order-date">@o.OrderDate.ToString("dd/MM/yyyy HH:mm") &middot; @o.ItemCount item(s)</span>
+                        <div class="order-badges">
+                            <span class="badge pay-@((o.PaymentStatusCode ?? "").ToLower())">@(o.PaymentStatusName ?? "-")</span>
+                            <span class="badge ship-@((o.ShippingStatusCode ?? "").ToLower())">@(o.ShippingStatusName ?? "-")</span>
+                        </div>
+                    </div>
+                    <div class="order-card-side">
+                        <span class="order-total">@o.Total.ToString("N0") ₫</span>
+                        <span class="order-arrow">&rsaquo;</span>
+                    </div>
+                </a>
+            }
+        </div>
+    }
+</div>

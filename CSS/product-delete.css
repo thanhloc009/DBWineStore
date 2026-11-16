@@ -1,0 +1,219 @@
+﻿/* Product delete page - simple */
+
+.del-page {
+    padding: 40px 16px 60px;
+    font-family: 'Inter', sans-serif;
+    color: #2b1d1a;
+}
+
+.del-card {
+    max-width: 720px;
+    margin: 0 auto;
+    background: #fff;
+    border: 1px solid #eee5dc;
+    border-radius: 16px;
+    padding: 28px;
+    box-shadow: 0 10px 28px rgba(74, 14, 24, .08);
+}
+
+/* header */
+.del-head {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    margin-bottom: 22px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid #f0e8de;
+}
+
+.del-icon {
+    width: 46px;
+    height: 46px;
+    flex-shrink: 0;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: #c53030;
+    background: #fdecec;
+}
+
+.del-head h2 {
+    margin: 0 0 2px;
+    font-size: 1.35rem;
+    color: #4A0E18;
+}
+
+.del-head p {
+    margin: 0;
+    font-size: .92rem;
+    color: #7c7773;
+}
+
+/* body: image + info */
+.del-body {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+}
+
+.del-image {
+    width: 190px;
+    height: 240px;
+    flex-shrink: 0;
+    border-radius: 12px;
+    border: 1px solid #f0e8de;
+    background: #f5f0eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    font-size: 3rem;
+    color: #d9cdbb;
+}
+
+    .del-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        padding: 8px;
+    }
+
+.del-info {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+}
+
+    .del-info > div {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 10px 0;
+        border-bottom: 1px solid #f5eee6;
+        font-size: .94rem;
+    }
+
+        .del-info > div:last-child {
+            border-bottom: 0;
+        }
+
+    .del-info dt {
+        margin: 0;
+        color: #8a7a70;
+        flex-shrink: 0;
+    }
+
+    .del-info dd {
+        margin: 0;
+        text-align: right;
+        overflow-wrap: anywhere;
+    }
+
+        .del-info dd.strong {
+            font-weight: 700;
+            color: #4A0E18;
+        }
+
+.del-badge {
+    display: inline-block;
+    padding: 3px 12px;
+    border-radius: 999px;
+    font-size: .8rem;
+    font-weight: 600;
+}
+
+    .del-badge.on {
+        background: #e8f4ec;
+        color: #2f7a4d;
+    }
+
+    .del-badge.off {
+        background: #f0ebe6;
+        color: #8a7a70;
+    }
+
+/* note */
+.del-note {
+    margin: 20px 0 22px;
+    padding: 11px 14px;
+    border-radius: 10px;
+    background: #fff8e1;
+    border: 1px solid #f3dfa2;
+    color: #6b4f00;
+    font-size: .88rem;
+}
+
+    .del-note i {
+        margin-right: 6px;
+        color: #C9A227;
+    }
+
+/* buttons */
+.del-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.del-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 11px 24px;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    font-family: inherit;
+    font-size: .94rem;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background .2s, color .2s, transform .15s;
+}
+
+    .del-btn:hover {
+        transform: translateY(-1px);
+        text-decoration: none;
+    }
+
+    .del-btn.danger {
+        background: #c53030;
+        color: #fff;
+    }
+
+        .del-btn.danger:hover {
+            background: #a82424;
+            color: #fff;
+        }
+
+    .del-btn.ghost {
+        background: #fff;
+        color: #6B1E2A;
+        border-color: #e3d3b0;
+    }
+
+        .del-btn.ghost:hover {
+            background: #f8eeee;
+            color: #6B1E2A;
+        }
+
+/* phone */
+@media (max-width: 600px) {
+    .del-card {
+        padding: 20px;
+    }
+
+    .del-body {
+        flex-direction: column;
+    }
+
+    .del-image {
+        width: 100%;
+        height: 220px;
+    }
+
+    .del-actions {
+        flex-direction: column;
+    }
+}

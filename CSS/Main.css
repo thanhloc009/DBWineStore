@@ -797,7 +797,7 @@
     }
 
     .category-block {
-        --per-view: 2.3;  shows a peek of the next product so people know to swipe 
+        --per-view: 2.3;  /*shows a peek of the next product so people know to swipe */
         --gap: 14px;
         padding: 20px 16px;
         margin-bottom: 24px;
@@ -877,7 +877,7 @@
     }
 }
 
- respect "reduce motion" accessibility setting 
+ /*respect "reduce motion" accessibility setting*/ 
 @media (prefers-reduced-motion: reduce) {
     .all * {
         transition: none !important;
